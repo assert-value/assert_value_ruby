@@ -118,9 +118,15 @@ class ActiveSupport::TestCase
         # ignore leading newlines if any (trailing will be automatically ignored by split())
         result.delete_at(0) if result[0] == ""
 
-        # ignore indentation: we assume that the first line defines indentation
         indentation = $1.length if result[0] and result[0] =~ /^(\s+)/
-        result.map! {|line| line.gsub(/^\s{#{indentation}}/, '') } if indentation
+
+        result.map! do |line|
+            # ignore indentation: we assume that the first line defines indentation
+            line.gsub!(/^\s{#{indentation}}/, '') if indentation
+
+            # ignore trailing spaces and comments
+            line.gsub!(/\s*(#.*)?/, '')
+        end
 
         result
     end
