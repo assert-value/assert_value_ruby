@@ -72,8 +72,6 @@ class ActiveSupport::TestCase
                     expected_text_end_line = expected_text_start_line = line.to_i + @@file_offsets[file]
                     expected_text_end_line += 1 while !["END", "EOS"].include?(source[expected_text_end_line].strip)
 
-                    puts expected_text_start_line
-                    puts expected_text_end_line
                     expected_length = expected_text_end_line - expected_text_start_line
 
                     # indentation is the indentation of assert_same call + 4
