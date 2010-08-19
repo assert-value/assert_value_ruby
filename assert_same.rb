@@ -4,6 +4,45 @@ class ActiveSupport::TestCase
 
     @@file_offsets = Hash.new { |hash, key| hash[key] = 0 }
 
+    #Usage:
+    #In the test source:
+    #    assert_same something, <<-END
+    #        foo
+    #        bar
+    #        zee
+    #    END
+    #
+    #Runing tests as usual will report a failure (if any) and show a diff.
+    #Running tests with --interactive will let you review diffs and accept new actual values
+    #as expected (modifying the test files).
+    #Running tests with --interactive --accept-new-values will print out diffs 
+    #and accept all new actual values.
+    #Examples:
+    #    ruby test/unit/foo_test.rb -- --interactive
+    #    ruby test/unit/foo_test.rb -- --interactive --accept-new-values
+    #
+    #
+    #Note:
+    #- assert_same ignores indentation, so you don't have to start your "expected" string
+    #  from the first position in the line (see example above)
+    #- but it skips only the indentation of the first line in the "expected" string, so
+    #  you still can use indentation like this:
+    #  assert_same something, <<-END
+    #      foo 1
+    #        foo 1.1
+    #        foo 1.2
+    #      bar 2
+    #        bar 2.1
+    #  END
+    #- only END and EOS are supported as end of string sequence
+    #- it's a requirement that you have <<-END at the same line as assert_same
+    #- it's ok to have several assert_same's in the same test method, assert_same.
+    #  correctly updates all assert_same's in the test file
+    #- it's ok to leave expected string empty, like this:
+    #  assert_same something, <<-END
+    #  END
+    #  in fact, this is the preferred way to create such tests - you write empty.
+    #  assert_same and then accept the actual value as expected and commit
     def assert_same(actual, expected)
         expected ||= ""
 
