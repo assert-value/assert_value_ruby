@@ -23,6 +23,8 @@ class ActiveSupport::TestCase
     #Examples:
     #    ruby test/unit/foo_test.rb -- --interactive
     #    ruby test/unit/foo_test.rb -- --interactive --accept-new-values
+    #    rake test TESTOPTS="-- --interactive --accept-new-values"
+    #    rake test:units TESTOPTS="-- --interactive --accept-new-values"
     #
     #
     #Note:
