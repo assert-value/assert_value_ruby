@@ -2,7 +2,10 @@
 
 class ActiveSupport::TestCase
 
-    @@file_offsets = Hash.new { |hash, key| hash[key] = 0 }
+    #Hash[filename][line_number] = offset
+    #For each line in the original file we store its offset (+N or -N lines)
+    #relative to the actual file
+    @@file_offsets = Hash.new { |hash, key| hash[key] = {} }
 
     #Usage:
     #In the test source:
@@ -69,7 +72,13 @@ class ActiveSupport::TestCase
                     source = File.readlines(RAILS_ROOT + "/" + file)
 
                     # file may be changed by previous accepted assert_same's, adjust line numbers
-                    expected_text_end_line = expected_text_start_line = line.to_i + @@file_offsets[file]
+                    offset = @@file_offsets[file].keys.inject(0) do |sum, i|
+                        puts "checking offset. line #{line}. stored_offset for #{i} is #{@@file_offsets[file][i]}"
+                        line.to_i >= i ? sum + @@file_offsets[file][i] : sum
+                    end
+                    puts "line #{line.to_i} offset #{offset}"
+
+                    expected_text_end_line = expected_text_start_line = line.to_i + offset
                     expected_text_end_line += 1 while !["END", "EOS"].include?(source[expected_text_end_line].strip)
 
                     expected_length = expected_text_end_line - expected_text_start_line
@@ -79,11 +88,11 @@ class ActiveSupport::TestCase
                     indentation += 4
 
                     source = source[0, expected_text_start_line] +
-                        actual.split("\n").map { |line| "#{" "*(indentation)}#{line}\n"} +
+                        actual.split("\n").map { |l| "#{" "*(indentation)}#{l}\n"} +
                         source[expected_text_end_line, source.length]
 
                     # recalculate line number adjustments
-                    @@file_offsets[file] += actual.split("\n").length - expected_length
+                    @@file_offsets[file][line.to_i] = actual.split("\n").length - expected_length
 
                     source_file = File.open(RAILS_ROOT + "/" + file, "w+")
                     source_file.write(source)
