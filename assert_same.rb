@@ -53,8 +53,8 @@ class ActiveSupport::TestCase
 
         file, method, line = get_caller_location
 
-        is_same, is_same_with_comments, diff = compare_for_assert_same(expected, actual)
-        if !is_same or (!is_same_with_comments and ARGV.include?("--refresh"))
+        is_same, is_same_canonicalized, diff = compare_for_assert_same(expected, actual)
+        if !is_same_canonicalized or (!is_same and ARGV.include?("--refresh"))
             if ARGV.include? "--interactive" or ARGV.include?("--refresh")
                 # print method name and short backtrace
                 failure = Test::Unit::Failure.new(name, filter_backtrace(caller(0)), diff)
@@ -114,10 +114,10 @@ class ActiveSupport::TestCase
     end
 
     def compare_for_assert_same(expected_verbatim, actual_verbatim)
-        expected, expected_without_comments = canonicalize_for_assert_same(expected_verbatim)
-        actual, actual_without_comments = canonicalize_for_assert_same(actual_verbatim)
-        diff = NimbleTextDiff.array_diff(expected_without_comments, actual_without_comments)
-        [expected_without_comments == actual_without_comments, expected == actual, diff]
+        expected_canonicalized, expected = canonicalize_for_assert_same(expected_verbatim)
+        actual_canonicalized, actual = canonicalize_for_assert_same(actual_verbatim)
+        diff = NimbleTextDiff.array_diff(expected_canonicalized, actual_canonicalized)
+        [expected_canonicalized == actual_canonicalized, expected == actual, diff]
     end
 
     def canonicalize_for_assert_same(text)
@@ -137,11 +137,11 @@ class ActiveSupport::TestCase
         end
 
         # ignore comments
-        result_without_comments = result.map do |line|
+        result_canonicalized= result.map do |line|
             line.gsub(/\s*(#.*)?$/, '')
         end
 
-        [result, result_without_comments]
+        [result, result_canonicalized]
     end
 
 end
