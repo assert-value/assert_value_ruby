@@ -53,14 +53,14 @@ class ActiveSupport::TestCase
 
         file, method, line = get_caller_location
 
-        is_same, diff = compare_for_assert_same(expected, actual)
-        if !is_same
-            if ARGV.include? "--interactive"
+        is_same, is_same_with_comments, diff = compare_for_assert_same(expected, actual)
+        if !is_same or (!is_same_with_comments and ARGV.include?("--refresh"))
+            if ARGV.include? "--interactive" or ARGV.include?("--refresh")
                 # print method name and short backtrace
                 failure = Test::Unit::Failure.new(name, filter_backtrace(caller(0)), diff)
                 puts "\n#{failure}"
 
-                if ARGV.include? "--accept-new-values"
+                if ARGV.include? "--accept-new-values" or ARGV.include?("--refresh")
                     accept = true
                 else
                     print "Accept the new value (Y/n)?: "
@@ -116,10 +116,10 @@ class ActiveSupport::TestCase
     end
 
     def compare_for_assert_same(expected_verbatim, actual_verbatim)
-        expected = canonicalize_for_assert_same(expected_verbatim)
-        actual = canonicalize_for_assert_same(actual_verbatim)
-        diff = NimbleTextDiff.array_diff(expected, actual)
-        [expected == actual, diff]
+        expected, expected_without_comments = canonicalize_for_assert_same(expected_verbatim)
+        actual, actual_without_comments = canonicalize_for_assert_same(actual_verbatim)
+        diff = NimbleTextDiff.array_diff(expected_without_comments, actual_without_comments)
+        [expected_without_comments == actual_without_comments, expected == actual, diff]
     end
 
     def canonicalize_for_assert_same(text)
@@ -134,12 +134,16 @@ class ActiveSupport::TestCase
         result.map! do |line|
             # ignore indentation: we assume that the first line defines indentation
             line.gsub!(/^\s{#{indentation}}/, '') if indentation
-
-            # ignore trailing spaces and comments
-            line.gsub!(/\s*(#.*)?/, '')
+            # ignore trailing spaces
+            line.gsub(/\s*$/, '')
         end
 
-        result
+        # ignore comments
+        result_without_comments = result.map do |line|
+            line.gsub(/\s*(#.*)?$/, '')
+        end
+
+        [result, result_without_comments]
     end
 
 end
