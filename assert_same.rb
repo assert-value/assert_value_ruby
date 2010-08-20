@@ -75,10 +75,8 @@ class ActiveSupport::TestCase
 
                     # file may be changed by previous accepted assert_same's, adjust line numbers
                     offset = @@file_offsets[file].keys.inject(0) do |sum, i|
-                        puts "checking offset. line #{line}. stored_offset for #{i} is #{@@file_offsets[file][i]}"
                         line.to_i >= i ? sum + @@file_offsets[file][i] : sum
                     end
-                    puts "line #{line.to_i} offset #{offset}"
 
                     expected_text_end_line = expected_text_start_line = line.to_i + offset
                     expected_text_end_line += 1 while !["END", "EOS"].include?(source[expected_text_end_line].strip)
