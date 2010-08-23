@@ -49,9 +49,17 @@ class ActiveSupport::TestCase
     #  in fact, this is the preferred way to create such tests - you write empty.
     #  assert_same and then accept the actual value as expected and commit
     def assert_same(actual, expected)
-        expected ||= ""
-
-        file, method, line = get_caller_location
+        if expected.class == String
+            expected ||= ""
+            mode = :expecting_string
+        elsif expected.class == Hash
+            assure(expected.has_key? :log)
+            mode = :expecting_file
+            log_file = File.expand_path(expected[:log], RAILS_ROOT)
+            expected = File.read(log_file)
+        else
+            internal_error("Missing expected argument for assert_same")
+        end
 
         is_same, is_same_canonicalized, diff = compare_for_assert_same(expected, actual)
         if !is_same_canonicalized or (!is_same and ARGV.include?("--refresh"))
@@ -69,35 +77,11 @@ class ActiveSupport::TestCase
                 end
 
                 if accept
-                    # read source file, construct the new source, replacing everything
-                    # between "do" and "end" in assert_same's block
-                    source = File.readlines(RAILS_ROOT + "/" + file)
-
-                    # file may be changed by previous accepted assert_same's, adjust line numbers
-                    offset = @@file_offsets[file].keys.inject(0) do |sum, i|
-                        line.to_i >= i ? sum + @@file_offsets[file][i] : sum
+                    if mode == :expecting_string
+                        accept_string(actual)
+                    elsif mode == :expecting_file
+                        accept_file(actual, log_file)
                     end
-
-                    expected_text_end_line = expected_text_start_line = line.to_i + offset
-                    expected_text_end_line += 1 while !["END", "EOS"].include?(source[expected_text_end_line].strip)
-
-                    expected_length = expected_text_end_line - expected_text_start_line
-
-                    # indentation is the indentation of assert_same call + 4
-                    indentation = source[expected_text_start_line-1] =~ /^(\s+)/ ? $1.length : 0
-                    indentation += 4
-
-                    source = source[0, expected_text_start_line] +
-                        actual.split("\n").map { |l| "#{" "*(indentation)}#{l}\n"} +
-                        source[expected_text_end_line, source.length]
-
-                    # recalculate line number adjustments
-                    @@file_offsets[file][line.to_i] = actual.split("\n").length - expected_length
-
-                    source_file = File.open(RAILS_ROOT + "/" + file, "w+")
-                    source_file.write(source)
-                    source_file.fsync
-                    source_file.close
                 end
             end
             if accept
@@ -111,6 +95,47 @@ class ActiveSupport::TestCase
         else
             add_assertion
         end
+    end
+
+    def accept_string(actual)
+        file, method, line = get_caller_location(:depth => 3)
+
+        # read source file, construct the new source, replacing everything
+        # between "do" and "end" in assert_same's block
+        source = File.readlines(RAILS_ROOT + "/" + file)
+
+        # file may be changed by previous accepted assert_same's, adjust line numbers
+        offset = @@file_offsets[file].keys.inject(0) do |sum, i|
+            line.to_i >= i ? sum + @@file_offsets[file][i] : sum
+        end
+
+        expected_text_end_line = expected_text_start_line = line.to_i + offset
+        expected_text_end_line += 1 while !["END", "EOS"].include?(source[expected_text_end_line].strip)
+
+        expected_length = expected_text_end_line - expected_text_start_line
+
+        # indentation is the indentation of assert_same call + 4
+        indentation = source[expected_text_start_line-1] =~ /^(\s+)/ ? $1.length : 0
+        indentation += 4
+
+        source = source[0, expected_text_start_line] +
+            actual.split("\n").map { |l| "#{" "*(indentation)}#{l}\n"} +
+            source[expected_text_end_line, source.length]
+
+        # recalculate line number adjustments
+        @@file_offsets[file][line.to_i] = actual.split("\n").length - expected_length
+
+        source_file = File.open(RAILS_ROOT + "/" + file, "w+")
+        source_file.write(source)
+        source_file.fsync
+        source_file.close
+    end
+
+    def accept_file(actual, log_file)
+        log = File.open(log_file, "w+")
+        log.write(actual)
+        log.fsync
+        log.close
     end
 
     def compare_for_assert_same(expected_verbatim, actual_verbatim)
