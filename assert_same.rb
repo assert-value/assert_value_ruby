@@ -140,6 +140,8 @@ class ActiveSupport::TestCase
         result_canonicalized= result.map do |line|
             line.gsub(/\s*(#.*)?$/, '')
         end
+        # ignore blank lines (usually they are lines with comments only)
+        result_canonicalized.delete_if { |line| line.blank? }
 
         [result, result_canonicalized]
     end
