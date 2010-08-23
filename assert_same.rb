@@ -58,7 +58,7 @@ class ActiveSupport::TestCase
             log_file = File.expand_path(expected[:log], RAILS_ROOT)
             expected = File.read(log_file)
         else
-            internal_error("Missing expected argument for assert_same")
+            internal_error("Incorrect expected argument for assert_same. It must be either String or Hash.")
         end
 
         is_same, is_same_canonicalized, diff = compare_for_assert_same(expected, actual)
