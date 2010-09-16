@@ -61,7 +61,7 @@ class ActiveSupport::TestCase
             internal_error("Incorrect expected argument for assert_same. It must be either String or Hash.")
         end
 
-        is_same, is_same_canonicalized, diff = compare_for_assert_same(expected, actual)
+        is_same_canonicalized, is_same, diff = compare_for_assert_same(expected, actual)
         if !is_same_canonicalized or (!is_same and ARGV.include?("--refresh"))
             if ARGV.include? "--interactive" or ARGV.include?("--refresh")
                 # print method name and short backtrace
@@ -168,7 +168,7 @@ class ActiveSupport::TestCase
         # ignore blank lines (usually they are lines with comments only)
         result_canonicalized.delete_if { |line| line.blank? }
 
-        [result, result_canonicalized]
+        [result_canonicalized, result]
     end
 
 end
