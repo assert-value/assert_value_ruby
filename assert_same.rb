@@ -71,7 +71,7 @@ class ActiveSupport::TestCase
                 failure = Test::Unit::Failure.new(name, filter_backtrace(caller(0)), diff)
                 puts "\n#{failure}"
 
-                if ARGV.include? "--accept-new-values" or ARGV.include?("--refresh")
+                if ARGV.include? "--accept-new-values" or ARGV.include?("--refresh") or mode == :autofill_expected_value
                     accept = true
                 else
                     print "Accept the new value (Y/n)?: "
