@@ -105,7 +105,7 @@ class ActiveSupport::TestCase
         # - STDIN is not a terminal device (i.e. we can't ask any questions)
         interactive = !ARGV.include?("--nointeractive") && STDIN.tty?
         canonicalize = !ARGV.include?("--nocanonicalize")
-        autoaccept = ARGV.include?("--autoaccept") || (mode == :autofill_expected_value)
+        autoaccept = ARGV.include?("--autoaccept")
 
         is_same_canonicalized, is_same, diff_canonicalized, diff = compare_for_assert_same(expected, actual)
 
