@@ -18,13 +18,13 @@ class ActiveSupport::TestCase
     #Runing tests as usual will report a failure (if any) and show a diff.
     #Running tests with --interactive will let you review diffs and accept new actual values
     #as expected (modifying the test files).
-    #Running tests with --interactive --accept-new-values will print out diffs 
+    #Running tests with --interactive --autoaccept will print out diffs
     #and accept all new actual values.
     #Examples:
     #    ruby test/unit/foo_test.rb -- --interactive
-    #    ruby test/unit/foo_test.rb -- --interactive --accept-new-values
-    #    rake test TESTOPTS="-- --interactive --accept-new-values"
-    #    rake test:units TESTOPTS="-- --interactive --accept-new-values"
+    #    ruby test/unit/foo_test.rb -- --interactive --autoaccept
+    #    rake test TESTOPTS="-- --interactive --autoaccept"
+    #    rake test:units TESTOPTS="-- --interactive --autoaccept"
     #
     #
     #Note:
@@ -64,14 +64,20 @@ class ActiveSupport::TestCase
             internal_error("Incorrect expected argument for assert_same. It must be either String or Hash.")
         end
 
-        is_same_canonicalized, is_same, diff = compare_for_assert_same(expected, actual)
-        if !is_same_canonicalized or (!is_same and ARGV.include?("--refresh"))
-            if ARGV.include? "--interactive" or ARGV.include?("--refresh")
+        interactive = ARGV.include?("--interactive")
+        canonicalize = !ARGV.include?("--nocanonicalize")
+        autoaccept = ARGV.include?("--autoaccept") || (mode == :autofill_expected_value)
+
+        is_same_canonicalized, is_same, diff_canonicalized, diff = compare_for_assert_same(expected, actual)
+
+        if (canonicalize and !is_same_canonicalized) or (!canonicalize and !is_same)
+            diff_to_report = canonicalize ? diff_canonicalized : diff
+            if interactive
                 # print method name and short backtrace
-                failure = Test::Unit::Failure.new(name, filter_backtrace(caller(0)), diff)
+                failure = Test::Unit::Failure.new(name, filter_backtrace(caller(0)), diff_to_report)
                 puts "\n#{failure}"
 
-                if ARGV.include? "--accept-new-values" or ARGV.include?("--refresh") or mode == :autofill_expected_value
+                if autoaccept
                     accept = true
                 else
                     print "Accept the new value (Y/n)?: "
@@ -93,7 +99,7 @@ class ActiveSupport::TestCase
                 # assert_same's in the method)
                 add_assertion
             else
-                raise Test::Unit::AssertionFailedError.new(diff)
+                raise Test::Unit::AssertionFailedError.new(diff_to_report)
             end
         else
             add_assertion
@@ -156,8 +162,9 @@ class ActiveSupport::TestCase
     def compare_for_assert_same(expected_verbatim, actual_verbatim)
         expected_canonicalized, expected = canonicalize_for_assert_same(expected_verbatim)
         actual_canonicalized, actual = canonicalize_for_assert_same(actual_verbatim)
-        diff = NimbleTextDiff.array_diff(expected_canonicalized, actual_canonicalized)
-        [expected_canonicalized == actual_canonicalized, expected == actual, diff]
+        diff_canonicalized = NimbleTextDiff.array_diff(expected_canonicalized, actual_canonicalized)
+        diff = NimbleTextDiff.array_diff(expected, actual)
+        [expected_canonicalized == actual_canonicalized, expected == actual, diff_canonicalized, diff]
     end
 
     def canonicalize_for_assert_same(text)
