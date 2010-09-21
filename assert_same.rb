@@ -43,15 +43,18 @@ class ActiveSupport::TestCase
     #- it's a requirement that you have <<-END at the same line as assert_same
     #- it's ok to have several assert_same's in the same test method, assert_same.
     #  correctly updates all assert_same's in the test file
-    #- it's ok to leave expected string empty, like this:
-    #  assert_same something, <<-END
-    #  END
-    #  in fact, this is the preferred way to create such tests - you write empty.
-    #  assert_same and then accept the actual value as expected and commit
-    def assert_same(actual, expected)
+    #- it's ok to omit expected string, like this:
+    #  assert_same something
+    #  in fact, this is the preferred way to create assert_same tests - you write empty
+    #  assert_same, tests in interactive mode will autofill expected value automatically,
+    #  and then you just commit the test
+    def assert_same(actual, expected = :autofill_expected_value)
         if expected.class == String
             expected ||= ""
             mode = :expecting_string
+        elsif expected == :autofill_expected_value
+            expected = ""
+            mode = :autofill_expected_value
         elsif expected.class == Hash
             assure(expected.has_key? :log)
             mode = :expecting_file
@@ -77,8 +80,8 @@ class ActiveSupport::TestCase
                 end
 
                 if accept
-                    if mode == :expecting_string
-                        accept_string(actual)
+                    if [:expecting_string, :autofill_expected_value].include? mode
+                        accept_string(actual, mode)
                     elsif mode == :expecting_file
                         accept_file(actual, log_file)
                     end
@@ -97,7 +100,7 @@ class ActiveSupport::TestCase
         end
     end
 
-    def accept_string(actual)
+    def accept_string(actual, mode)
         file, method, line = get_caller_location(:depth => 3)
 
         # read source file, construct the new source, replacing everything
@@ -110,7 +113,12 @@ class ActiveSupport::TestCase
         end
 
         expected_text_end_line = expected_text_start_line = line.to_i + offset
-        expected_text_end_line += 1 while !["END", "EOS"].include?(source[expected_text_end_line].strip)
+        unless mode == :autofill_expected_value
+            #if we're autofilling the value, END/EOS marker will not exist
+            #(second arg to assert_same is omitted)
+            #else we search for it
+            expected_text_end_line += 1 while !["END", "EOS"].include?(source[expected_text_end_line].strip)
+        end
 
         expected_length = expected_text_end_line - expected_text_start_line
 
@@ -118,12 +126,19 @@ class ActiveSupport::TestCase
         indentation = source[expected_text_start_line-1] =~ /^(\s+)/ ? $1.length : 0
         indentation += 4
 
+        if mode == :autofill_expected_value
+            # add second argument to assert_same if it's omitted
+            source[expected_text_start_line-1] = "#{source[expected_text_start_line-1].chop}, <<-END\n"
+        end
         source = source[0, expected_text_start_line] +
             actual.split("\n").map { |l| "#{" "*(indentation)}#{l}\n"} +
+            (mode == :autofill_expected_value ? ["#{" "*(indentation-4)}END\n"] : [])+
             source[expected_text_end_line, source.length]
 
         # recalculate line number adjustments
-        @@file_offsets[file][line.to_i] = actual.split("\n").length - expected_length
+        actual_length = actual.split("\n").length
+        actual_length += 1 if mode == :autofill_expected_value  # END marker after actual value
+        @@file_offsets[file][line.to_i] = actual_length - expected_length
 
         source_file = File.open(RAILS_ROOT + "/" + file, "w+")
         source_file.write(source)
