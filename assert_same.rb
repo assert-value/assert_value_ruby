@@ -7,48 +7,83 @@ class ActiveSupport::TestCase
     #relative to the actual file
     @@file_offsets = Hash.new { |hash, key| hash[key] = {} }
 
-    #Usage:
-    #In the test source:
-    #    assert_same something, <<-END
-    #        foo
-    #        bar
-    #        zee
-    #    END
+    # assert_same: assert which checks that two strings (expected and actual) are same
+    # and which can "magicall" replace expected value with the actual in case
+    # the new behavior (and new actual value) is correct
     #
-    #Running tests will let you review diffs and accept new actual values one-by-one
-    #(this modifies the test files).
-    #Run with --autoaccept to print out diffs and automatically accept all new actual values.
-    #Run with --nointeractive option to skip all questions and just report failures
-    #Run with --nocanonicalize to turn off excepted/actual value canonicalization
-    #Examples:
+    # == Usage ==
+    #
+    # Write this in the test source:
+    #     assert_same something, <<-END
+    #         foo
+    #         bar
+    #         zee
+    #     END
+    # 
+    # Then run tests as usual:
+    #    rake test:units
     #    ruby test/unit/foo_test.rb
+    #    ...
+    #
+    # When assert_same fails, you'll be able to:
+    # - review diff
+    # - (optionally) accept new actual value (this modifies the test source file)
+    #
+    # Additional options for test runs:
+    # --nointeractive skips all questions and just reports failures
+    # --autoaccept prints diffs and automatically accepts all new actual values
+    # --nocanonicalize turns off expected and actual value canonicalization (see below for details)
+    #
+    # Additional options can be passed during both single test file run and rake test run:
     #    ruby test/unit/foo_test.rb -- --autoaccept
     #    ruby test/unit/foo_test.rb -- --nointeractive
+    #
     #    rake test TESTOPTS="-- --autoaccept"
     #    rake test:units TESTOPTS="-- --nocanonicalize --autoaccept"
     #
     #
-    #Note:
-    #- assert_same ignores indentation, so you don't have to start your "expected" string
-    #  from the first position in the line (see example above)
-    #- but it skips only the indentation of the first line in the "expected" string, so
-    #  you still can use indentation like this:
+    #
+    # == Canonicalization ==
+    #
+    # Before comparing expected and actual strings, assert_same canonicalizes both using these rules:
+    # - indentation is ignored (except for indentation
+    #   relative to the first line of the expected/actual string)
+    # - ruby-style comments after "#" are ignored: 
+    #   both whole-line and end-of-line comments are supported
+    # - empty lines are ignored
+    # - trailing whitespaces are ignored
+    #
+    # You can turn canonicalization off with --nocanonicalize option. This is useful
+    # when you need to regenerate expected test strings.
+    # To regenerate the whole test suite, run:
+    #    rake test TESTOPTS="-- --nocanonicalize --autoaccept"
+    #
+    # Example of assert_same with comments:
     #  assert_same something, <<-END
+    #      # some tree
     #      foo 1
     #        foo 1.1
-    #        foo 1.2
+    #        foo 1.2    # some node
     #      bar 2
     #        bar 2.1
     #  END
-    #- only END and EOS are supported as end of string sequence
-    #- it's a requirement that you have <<-END at the same line as assert_same
-    #- it's ok to have several assert_same's in the same test method, assert_same.
-    #  correctly updates all assert_same's in the test file
-    #- it's ok to omit expected string, like this:
-    #  assert_same something
-    #  in fact, this is the preferred way to create assert_same tests - you write empty
-    #  assert_same, tests in interactive mode will autofill expected value automatically,
-    #  and then you just commit the test
+    #
+    #
+    #
+    # == Umportant Usage Rules ==
+    #
+    # Restrictions:
+    # - only END and EOS are supported as end of string sequence
+    # - it's a requirement that you have <<-END at the same line as assert_same
+    # - assert_same can't be within a block
+    #
+    # Misc:
+    # - it's ok to have several assert_same's in the same test method, assert_same.
+    #   correctly updates all assert_same's in the test file
+    # - it's ok to omit expected string, like this:
+    #       assert_same something
+    #   in fact, this is the preferred way to create assert_same tests - you write empty
+    #   assert_same, run tests and they will fill expected values for you automatically
     def assert_same(actual, expected = :autofill_expected_value)
         if expected.class == String
             expected ||= ""
