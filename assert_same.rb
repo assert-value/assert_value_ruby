@@ -15,16 +15,17 @@ class ActiveSupport::TestCase
     #        zee
     #    END
     #
-    #Runing tests as usual will report a failure (if any) and show a diff.
-    #Running tests with --interactive will let you review diffs and accept new actual values
-    #as expected (modifying the test files).
-    #Running tests with --interactive --autoaccept will print out diffs
-    #and accept all new actual values.
+    #Running tests will let you review diffs and accept new actual values one-by-one
+    #(this modifies the test files).
+    #Run with --autoaccept to print out diffs and automatically accept all new actual values.
+    #Run with --nointeractive option to skip all questions and just report failures
+    #Run with --nocanonicalize to turn off excepted/actual value canonicalization
     #Examples:
-    #    ruby test/unit/foo_test.rb -- --interactive
-    #    ruby test/unit/foo_test.rb -- --interactive --autoaccept
-    #    rake test TESTOPTS="-- --interactive --autoaccept"
-    #    rake test:units TESTOPTS="-- --interactive --autoaccept"
+    #    ruby test/unit/foo_test.rb
+    #    ruby test/unit/foo_test.rb -- --autoaccept
+    #    ruby test/unit/foo_test.rb -- --nointeractive
+    #    rake test TESTOPTS="-- --autoaccept"
+    #    rake test:units TESTOPTS="-- --nocanonicalize --autoaccept"
     #
     #
     #Note:
@@ -64,7 +65,10 @@ class ActiveSupport::TestCase
             internal_error("Incorrect expected argument for assert_same. It must be either String or Hash.")
         end
 
-        interactive = ARGV.include?("--interactive")
+        # interactive mode is turned on by default, except when
+        # - --nointeractive is given
+        # - STDIN is not a terminal device (i.e. we can't ask any questions)
+        interactive = !ARGV.include?("--nointeractive") && STDIN.tty?
         canonicalize = !ARGV.include?("--nocanonicalize")
         autoaccept = ARGV.include?("--autoaccept") || (mode == :autofill_expected_value)
 
