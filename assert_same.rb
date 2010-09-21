@@ -84,9 +84,12 @@ class ActiveSupport::TestCase
                 if autoaccept
                     accept = true
                 else
-                    print "Accept the new value (Y/n)?: "
+                    print "Accept the new value: yes to all, no to all, yes, no? [Y/N/y/n] (y): "
                     STDOUT.flush
-                    accept = ["", "Y"].include? STDIN.gets.strip.upcase
+                    response = STDIN.gets.strip
+                    accept = ["", "y", "Y"].include? response
+                    ARGV << "--autoaccept" if response == "Y"
+                    ARGV << "--nointeractive" if response == "N"
                 end
 
                 if accept
