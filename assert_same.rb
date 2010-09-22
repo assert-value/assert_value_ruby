@@ -30,16 +30,16 @@ class ActiveSupport::TestCase
     # - (optionally) accept new actual value (this modifies the test source file)
     #
     # Additional options for test runs:
-    # --nointeractive skips all questions and just reports failures
+    # --no-interactive skips all questions and just reports failures
     # --autoaccept prints diffs and automatically accepts all new actual values
-    # --nocanonicalize turns off expected and actual value canonicalization (see below for details)
+    # --no-canonicalize turns off expected and actual value canonicalization (see below for details)
     #
     # Additional options can be passed during both single test file run and rake test run:
     #    ruby test/unit/foo_test.rb -- --autoaccept
-    #    ruby test/unit/foo_test.rb -- --nointeractive
+    #    ruby test/unit/foo_test.rb -- --no-interactive
     #
     #    rake test TESTOPTS="-- --autoaccept"
-    #    rake test:units TESTOPTS="-- --nocanonicalize --autoaccept"
+    #    rake test:units TESTOPTS="-- --no-canonicalize --autoaccept"
     #
     #
     #
@@ -53,10 +53,10 @@ class ActiveSupport::TestCase
     # - empty lines are ignored
     # - trailing whitespaces are ignored
     #
-    # You can turn canonicalization off with --nocanonicalize option. This is useful
+    # You can turn canonicalization off with --no-canonicalize option. This is useful
     # when you need to regenerate expected test strings.
     # To regenerate the whole test suite, run:
-    #    rake test TESTOPTS="-- --nocanonicalize --autoaccept"
+    #    rake test TESTOPTS="-- --no-canonicalize --autoaccept"
     #
     # Example of assert_same with comments:
     #  assert_same something, <<-END
@@ -101,10 +101,10 @@ class ActiveSupport::TestCase
         end
 
         # interactive mode is turned on by default, except when
-        # - --nointeractive is given
+        # - --no-interactive is given
         # - STDIN is not a terminal device (i.e. we can't ask any questions)
-        interactive = !ARGV.include?("--nointeractive") && STDIN.tty?
-        canonicalize = !ARGV.include?("--nocanonicalize")
+        interactive = !ARGV.include?("--no-interactive") && STDIN.tty?
+        canonicalize = !ARGV.include?("--no-canonicalize")
         autoaccept = ARGV.include?("--autoaccept")
 
         is_same_canonicalized, is_same, diff_canonicalized, diff = compare_for_assert_same(expected, actual)
@@ -124,7 +124,7 @@ class ActiveSupport::TestCase
                     response = STDIN.gets.strip
                     accept = ["", "y", "Y"].include? response
                     ARGV << "--autoaccept" if response == "Y"
-                    ARGV << "--nointeractive" if response == "N"
+                    ARGV << "--no-interactive" if response == "N"
                 end
 
                 if accept
