@@ -95,7 +95,7 @@ class ActiveSupport::TestCase
             assure(expected.has_key? :log)
             mode = :expecting_file
             log_file = File.expand_path(expected[:log], RAILS_ROOT)
-            expected = File.read(log_file)
+            expected = File.exists?(log_file) ? File.read(log_file) : ""
         else
             internal_error("Incorrect expected argument for assert_same. It must be either String or Hash.")
         end
