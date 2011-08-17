@@ -1,4 +1,6 @@
-# Copyright (c) 2010 Pluron, Inc.
+# Copyright (c) 2010-2011 Pluron, Inc.
+require 'test/unit'
+require 'text_diff'
 
 class ActiveSupport::TestCase
 
@@ -204,8 +206,8 @@ class ActiveSupport::TestCase
     def compare_for_assert_same(expected_verbatim, actual_verbatim)
         expected_canonicalized, expected = canonicalize_for_assert_same(expected_verbatim)
         actual_canonicalized, actual = canonicalize_for_assert_same(actual_verbatim)
-        diff_canonicalized = NimbleTextDiff.array_diff(expected_canonicalized, actual_canonicalized)
-        diff = NimbleTextDiff.array_diff(expected, actual)
+        diff_canonicalized = AssertSame::TextDiff.array_diff(expected_canonicalized, actual_canonicalized)
+        diff = AssertSame::TextDiff.array_diff(expected, actual)
         [expected_canonicalized == actual_canonicalized, expected == actual, diff_canonicalized, diff]
     end
 
