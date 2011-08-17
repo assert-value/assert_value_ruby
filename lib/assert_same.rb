@@ -10,7 +10,7 @@ class Test::Unit::TestCase
     @@file_offsets = Hash.new { |hash, key| hash[key] = {} }
 
     # assert_same: assert which checks that two strings (expected and actual) are same
-    # and which can "magicall" replace expected value with the actual in case
+    # and which can "magically" replace expected value with the actual in case
     # the new behavior (and new actual value) is correct
     #
     # == Usage ==
