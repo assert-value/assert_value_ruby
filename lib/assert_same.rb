@@ -79,6 +79,13 @@ class Test::Unit::TestCase
     # - it's a requirement that you have <<-END at the same line as assert_same
     # - assert_same can't be within a block
     #
+    # Storing expected output in files:
+    # - assert_same something, :log => <path_to_file>
+    # - path to file is relative to:
+    #   - RAILS_ROOT (if that is defined)
+    #   - current dir (if no RAILS_ROOT is defined)
+    # - file doesn't have to exist, it will be created if necessary
+    #
     # Misc:
     # - it's ok to have several assert_same's in the same test method, assert_same.
     #   correctly updates all assert_same's in the test file
@@ -96,7 +103,12 @@ class Test::Unit::TestCase
         elsif expected.class == Hash
             raise ":log key is missing" unless expected.has_key? :log
             mode = :expecting_file
-            log_file = File.expand_path(expected[:log], RAILS_ROOT)
+            log_file = expected[:log]
+            if defined? RAILS_ROOT
+                log_file = File.expand_path(log_file, RAILS_ROOT)
+            else
+                log_file = File.expand_path(log_file, Dir.pwd)
+            end
             expected = File.exists?(log_file) ? File.read(log_file) : ""
         else
             internal_error("Incorrect expected argument for assert_same. It must be either String or Hash.")
