@@ -94,7 +94,7 @@ class ActiveSupport::TestCase
             expected = ""
             mode = :autofill_expected_value
         elsif expected.class == Hash
-            assure(expected.has_key? :log)
+            raise ":log key is missing" unless expected.has_key? :log
             mode = :expecting_file
             log_file = File.expand_path(expected[:log], RAILS_ROOT)
             expected = File.exists?(log_file) ? File.read(log_file) : ""
