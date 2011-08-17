@@ -2,7 +2,7 @@
 require 'test/unit'
 require 'text_diff'
 
-class ActiveSupport::TestCase
+class Test::Unit::TestCase
 
     #Hash[filename][line_number] = offset
     #For each line in the original file we store its offset (+N or -N lines)
@@ -150,6 +150,8 @@ class ActiveSupport::TestCase
         end
     end
 
+private
+
     def accept_string(actual, mode)
         file, method, line = get_caller_location(:depth => 3)
 
@@ -232,7 +234,7 @@ class ActiveSupport::TestCase
             line.gsub(/\s*(#.*)?$/, '')
         end
         # ignore blank lines (usually they are lines with comments only)
-        result_canonicalized.delete_if { |line| line.blank? }
+        result_canonicalized.delete_if { |line| line.nil? or line.empty? }
 
         [result_canonicalized, result]
     end
