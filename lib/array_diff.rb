@@ -296,6 +296,7 @@ end
 = ArrayDiff
 (({diff.rb})) - computes the differences between two arrays or
 strings. Copyright (C) 2001 Lars Christensen
+http://users.cybercity.dk/~dsl8950/ruby/diff.html
 
 == Synopsis
 
