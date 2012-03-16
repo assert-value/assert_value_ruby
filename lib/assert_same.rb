@@ -1,6 +1,7 @@
 # Copyright (c) 2010-2011 Pluron, Inc.
 require 'test/unit'
 require 'text_diff'
+require 'pathname'
 
 class Test::Unit::TestCase
 
@@ -169,7 +170,10 @@ private
 
         # read source file, construct the new source, replacing everything
         # between "do" and "end" in assert_same's block
-        source = File.readlines(RAILS_ROOT + "/" + file)
+        # using File::expand_path here because "file" can be either
+        # absolute path (when test is run with "rake test" runs)
+        # or relative path (when test is run via ruby <path_to_test_file>)
+        source = File.readlines(File::expand_path(file))
 
         # file may be changed by previous accepted assert_same's, adjust line numbers
         offset = @@file_offsets[file].keys.inject(0) do |sum, i|
@@ -204,7 +208,7 @@ private
         actual_length += 1 if mode == :autofill_expected_value  # END marker after actual value
         @@file_offsets[file][line.to_i] = actual_length - expected_length
 
-        source_file = File.open(RAILS_ROOT + "/" + file, "w+")
+        source_file = File.open(file, "w+")
         source_file.write(source)
         source_file.fsync
         source_file.close
@@ -249,6 +253,21 @@ private
         result_canonicalized.delete_if { |line| line.nil? or line.empty? }
 
         [result_canonicalized, result]
+    end
+
+    def get_caller_location(options = {:depth => 2})
+        caller_method = caller(options[:depth])[0]
+
+        #Sample output is:
+        #either full path when run as "rake test"
+        #   /home/user/assert_same/test/unit/assure_test.rb:9:in `test_assure
+        #or relative path when run as ruby test/unit/assure_test.rb
+        #   test/unit/assure_test.rb:9:in `test_assure
+        caller_method =~ /([^:]+):([0-9]+):in `(.+)'/
+        file = $1
+        line = $2
+        method = $3
+        [file, method, line]
     end
 
 end
