@@ -1,5 +1,5 @@
 # Copyright (c) 2010-2011 Pluron, Inc.
-require 'test/unit'
+require 'test/unit/testcase'
 require 'text_diff'
 require 'pathname'
 
