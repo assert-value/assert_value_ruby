@@ -209,7 +209,7 @@ private
         @@file_offsets[file][line.to_i] = actual_length - expected_length
 
         source_file = File.open(file, "w+")
-        source_file.write(source)
+        source_file.write(source.join(''))
         source_file.fsync
         source_file.close
     end
