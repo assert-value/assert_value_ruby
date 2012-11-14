@@ -10,8 +10,6 @@ SPEC = Gem::Specification.new do |s|
     s.description = "assert_same assertion"
     s.summary     = "Assert which checks that two strings (expected and actual) are same and which can magically replace expected value with the actual in case the new behavior (and new actual value) is correct"
 
-    s.add_development_dependency('bundler', '>= 1.0.0')
-
     s.files         = `git ls-files`.split("\n")
     s.test_files    = `git ls-files -- test/*`.split("\n")
 
