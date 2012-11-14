@@ -3,6 +3,52 @@ require 'test/unit/testcase'
 require 'text_diff'
 require 'pathname'
 
+$assert_same_options = []
+
+if RUBY_VERSION >= "1.9.0"
+
+    # Test/Unit from Ruby 1.9 can't accept additional options like it did in 1.8:
+    #   ruby test.rb -- --foo
+    # Now it has a strict option parser that considers all additional options as files.
+    # The right way to have an option now is to explicitly add it to Test/Unit parser.
+    module Test::Unit
+
+        module AssertSameOption
+            def setup_options(parser, options)
+                super
+                parser.on '--no-interactive', 'assert_same: non-interactive mode' do |flag|
+                    $assert_same_options << "--no-interactive"
+                    puts $assert_same_options
+                end
+                parser.on '--no-canonicalize', 'assert_same: turn off canonicalization' do |flag|
+                    $assert_same_options << "--no-canonicalize"
+                end
+                parser.on '--autoaccept', 'assert_same: automatically accept new actual values' do |flag|
+                    $assert_same_options << "--autoaccept"
+                end
+            end
+
+            def non_options(files, options)
+                super
+            end
+        end
+
+        class Runner < MiniTest::Unit
+            include Test::Unit::AssertSameOption
+        end
+
+    end
+
+else
+
+    # In Ruby 1.8 additional test options are simply passed via ARGV
+    $assert_same_options << "--no-interactive" if ARGV.include?("--no-interactive")
+    $assert_same_options << "--no-canonicalize" if ARGV.include?("--no-canonicalize")
+    $assert_same_options << "--autoaccept" if ARGV.include?("--autoaccept")
+
+end
+
+
 module Test::Unit::Assertions
 
     #Hash[filename][line_number] = offset
@@ -38,12 +84,19 @@ module Test::Unit::Assertions
     # --no-canonicalize turns off expected and actual value canonicalization (see below for details)
     #
     # Additional options can be passed during both single test file run and rake test run:
+    #    In Ruby 1.8:
     #    ruby test/unit/foo_test.rb -- --autoaccept
     #    ruby test/unit/foo_test.rb -- --no-interactive
     #
     #    rake test TESTOPTS="-- --autoaccept"
     #    rake test:units TESTOPTS="-- --no-canonicalize --autoaccept"
     #
+    #    In Ruby 1.9:
+    #    ruby test/unit/foo_test.rb --autoaccept
+    #    ruby test/unit/foo_test.rb --no-interactive
+    #
+    #    rake test TESTOPTS="--autoaccept"
+    #    rake test:units TESTOPTS="--no-canonicalize --autoaccept"
     #
     #
     # == Canonicalization ==
@@ -59,7 +112,10 @@ module Test::Unit::Assertions
     # You can turn canonicalization off with --no-canonicalize option. This is useful
     # when you need to regenerate expected test strings.
     # To regenerate the whole test suite, run:
+    #    In Ruby 1.8:
     #    rake test TESTOPTS="-- --no-canonicalize --autoaccept"
+    #    In Ruby 1.9:
+    #    rake test TESTOPTS="--no-canonicalize --autoaccept"
     #
     # Example of assert_same with comments:
     #  assert_same something, <<-END
@@ -118,9 +174,9 @@ module Test::Unit::Assertions
         # interactive mode is turned on by default, except when
         # - --no-interactive is given
         # - STDIN is not a terminal device (i.e. we can't ask any questions)
-        interactive = !ARGV.include?("--no-interactive") && STDIN.tty?
-        canonicalize = !ARGV.include?("--no-canonicalize")
-        autoaccept = ARGV.include?("--autoaccept")
+        interactive = !$assert_same_options.include?("--no-interactive") && STDIN.tty?
+        canonicalize = !$assert_same_options.include?("--no-canonicalize")
+        autoaccept = $assert_same_options.include?("--autoaccept")
 
         is_same_canonicalized, is_same, diff_canonicalized, diff = compare_for_assert_same(expected, actual)
 
@@ -137,8 +193,8 @@ module Test::Unit::Assertions
                     STDOUT.flush
                     response = STDIN.gets.strip
                     accept = ["", "y", "Y"].include? response
-                    ARGV << "--autoaccept" if response == "Y"
-                    ARGV << "--no-interactive" if response == "N"
+                    $assert_same_options << "--autoaccept" if response == "Y"
+                    $assert_same_options << "--no-interactive" if response == "N"
                 end
 
                 if accept
