@@ -3,7 +3,7 @@ require 'test/unit/testcase'
 require 'text_diff'
 require 'pathname'
 
-class Test::Unit::TestCase
+module Test::Unit::Assertions
 
     #Hash[filename][line_number] = offset
     #For each line in the original file we store its offset (+N or -N lines)
@@ -128,8 +128,7 @@ class Test::Unit::TestCase
             diff_to_report = canonicalize ? diff_canonicalized : diff
             if interactive
                 # print method name and short backtrace
-                failure = Test::Unit::Failure.new(name, filter_backtrace(caller(0)), diff_to_report)
-                puts "\n#{failure}"
+                soft_fail(diff_to_report)
 
                 if autoaccept
                     accept = true
@@ -154,16 +153,42 @@ class Test::Unit::TestCase
                 # when change is accepted, we should not report it as a failure because
                 # we want the test method to continue executing (in case there're more
                 # assert_same's in the method)
-                add_assertion
+                succeed
             else
-                raise Test::Unit::AssertionFailedError.new(diff_to_report)
+                fail(diff)
             end
         else
-            add_assertion
+            succeed
         end
     end
 
 private
+
+    def succeed
+        if RUBY_VERSION < "1.9.0"
+            add_assertion
+        else
+            true
+        end
+    end
+
+    def soft_fail(diff)
+        if RUBY_VERSION < "1.9.0"
+            failure = Test::Unit::Failure.new(name, filter_backtrace(caller(0)), diff)
+            puts "\n#{failure}"
+        else
+            failure = MiniTest::Assertion.new(diff)
+            puts "\n#{failure}"
+        end
+    end
+
+    def fail(diff)
+        if RUBY_VERSION < "1.9.0"
+            raise Test::Unit::AssertionFailedError.new(diff)
+        else
+            raise MiniTest::Assertion.new(diff)
+        end
+    end
 
     def accept_string(actual, mode)
         file, method, line = get_caller_location(:depth => 3)
