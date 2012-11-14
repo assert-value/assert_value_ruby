@@ -3,3 +3,8 @@ assert_same
 
 Please read the API docs in lib/assert_same.rb
 
+
+Changelog
+- 0.3: Ruby 1.9 is supported
+- 0.2: Make assert_same useful as a standalone gem. Bugfixes
+- 0.1: Initial release
