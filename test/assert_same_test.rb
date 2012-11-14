@@ -1,7 +1,7 @@
 # Copyright (c) 2011 Pluron, Inc.
 
 require 'test/unit'
-require 'lib/assert_same'
+require 'assert_same'
 
 class AssertSameTest < Test::Unit::TestCase
 
