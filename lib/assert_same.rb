@@ -77,6 +77,14 @@ module Test::Unit::Assertions
     #         bar
     #         zee
     #     END
+    #
+    # You can also use assert_same for blocks. Then you can assert block result or raised exception
+    #    assert_same(<<-END) do
+    #        Exception NoMethodError: undefined method `+' for nil:NilClass
+    #    END
+    #        # Code block starts here
+    #        c = nil + 1
+    #    end
     # 
     # Then run tests as usual:
     #    rake test:units
@@ -159,16 +167,29 @@ module Test::Unit::Assertions
     #       assert_same something
     #   in fact, this is the preferred way to create assert_same tests - you write empty
     #   assert_same, run tests and they will fill expected values for you automatically
-    def assert_same(actual, expected = :autofill_expected_value)
-        if expected.class == String
-            expected ||= ""
-            mode = :expecting_string
-        elsif expected == :autofill_expected_value
+    def assert_same(*args)
+        if block_given?
+            mode = :block
+            expected = args[0]
+            actual = ""
+            begin
+                actual = yield.to_s
+            rescue Exception => e
+                actual = "Exception #{e.class}: #{e.message}"
+            end
+        else
+            mode = :scalar
+            expected = args[1]
+            actual = args[0]
+        end
+
+        if expected.nil?
             expected = ""
-            mode = :autofill_expected_value
+            change = :create_expected_string
+        elsif expected.class == String
+            change = :update_expected_string
         elsif expected.class == Hash
             raise ":log key is missing" unless expected.has_key? :log
-            mode = :expecting_file
             log_file = expected[:log]
             if defined? RAILS_ROOT
                 log_file = File.expand_path(log_file, RAILS_ROOT)
@@ -176,8 +197,9 @@ module Test::Unit::Assertions
                 log_file = File.expand_path(log_file, Dir.pwd)
             end
             expected = File.exists?(log_file) ? File.read(log_file) : ""
+            change = :update_file_with_expected_string
         else
-            internal_error("Incorrect expected argument for assert_same. It must be either String or Hash.")
+            internal_error("Invalid expected class #{excepted.class}")
         end
 
         # interactive mode is turned on by default, except when
@@ -207,10 +229,12 @@ module Test::Unit::Assertions
                 end
 
                 if accept
-                    if [:expecting_string, :autofill_expected_value].include? mode
-                        accept_string(actual, mode)
-                    elsif mode == :expecting_file
+                    if [:create_expected_string, :update_expected_string].include? change
+                        accept_string(actual, change, mode)
+                    elsif change == :update_file_with_expected_string
                         accept_file(actual, log_file)
+                    else
+                        internal_error("Invalid change #{change}")
                     end
                 end
             end
@@ -255,7 +279,10 @@ private
         end
     end
 
-    def accept_string(actual, mode)
+    # actual - actual value of the scalar or result of the executed block
+    # change - what to do with expected value (:create_expected_string or :update_expected_string)
+    # mode   - describes signature of assert_same call by type of main argument (:block or :scalar)
+    def accept_string(actual, change, mode)
         file, method, line = get_caller_location(:depth => 3)
 
         # read source file, construct the new source, replacing everything
@@ -271,11 +298,13 @@ private
         end
 
         expected_text_end_line = expected_text_start_line = line.to_i + offset
-        unless mode == :autofill_expected_value
-            #if we're autofilling the value, END/EOS marker will not exist
-            #(second arg to assert_same is omitted)
-            #else we search for it
+        if change == :update_expected_string
+            #search for the end of expected value in code
             expected_text_end_line += 1 while !["END", "EOS"].include?(source[expected_text_end_line].strip)
+        elsif change == :create_expected_string
+            # The is no expected value yet. expected_text_end_line is unknown
+        else
+            internal_error("Invalid change #{change}")
         end
 
         expected_length = expected_text_end_line - expected_text_start_line
@@ -284,18 +313,25 @@ private
         indentation = source[expected_text_start_line-1] =~ /^(\s+)/ ? $1.length : 0
         indentation += 4
 
-        if mode == :autofill_expected_value
-            # add second argument to assert_same if it's omitted
-            source[expected_text_start_line-1] = "#{source[expected_text_start_line-1].chop}, <<-END\n"
+        if change == :create_expected_string 
+            if mode == :scalar
+                # add second argument to assert_same if it's omitted
+                source[expected_text_start_line-1] = "#{source[expected_text_start_line-1].chop}, <<-END\n"
+            elsif mode == :block
+                # add expected value as argument to assert_same before block call
+                source[expected_text_start_line-1] = source[expected_text_start_line-1].sub(/assert_same(\(.*?\))*/, "assert_same(<<-END)")
+            else
+                internal_error("Invalid mode #{mode}")
+            end
         end
         source = source[0, expected_text_start_line] +
             actual.split("\n").map { |l| "#{" "*(indentation)}#{l}\n"} +
-            (mode == :autofill_expected_value ? ["#{" "*(indentation-4)}END\n"] : [])+
+            (change == :create_expected_string ? ["#{" "*(indentation-4)}END\n"] : [])+
             source[expected_text_end_line, source.length]
 
         # recalculate line number adjustments
         actual_length = actual.split("\n").length
-        actual_length += 1 if mode == :autofill_expected_value  # END marker after actual value
+        actual_length += 1 if change == :create_expected_string # END marker after expected value
         @@file_offsets[file][line.to_i] = actual_length - expected_length
 
         source_file = File.open(file, "w+")
