@@ -49,6 +49,15 @@ else
 end
 
 
+#Use this to raise internal error with a given message
+#You can define your own method for your application
+unless defined? internal_error
+    def internal_error(message = 'internal error')
+        raise message
+    end
+end
+
+
 module Test::Unit::Assertions
 
     #Hash[filename][line_number] = offset
