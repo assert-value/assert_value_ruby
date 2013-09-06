@@ -204,8 +204,9 @@ module Test::Unit::Assertions
 
         # interactive mode is turned on by default, except when
         # - --no-interactive is given
+        # - CIRCLE_CI is set (CircleCI captures test output, but doesn't interact with user)
         # - STDIN is not a terminal device (i.e. we can't ask any questions)
-        interactive = !$assert_same_options.include?("--no-interactive") && STDIN.tty?
+        interactive = !$assert_same_options.include?("--no-interactive") && !ENV["CIRCLE_CI"] && STDIN.tty?
         canonicalize = !$assert_same_options.include?("--no-canonicalize")
         autoaccept = $assert_same_options.include?("--autoaccept")
 
