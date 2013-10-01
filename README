@@ -95,6 +95,9 @@ In Ruby 1.9:
 
 Changelog
 ---------
+- 0.7: Support Ruby 1.9's MiniTest
+- 0.6: Support test execution on Mac
+- 0.5: Support code blocks to assert_same
 - 0.4: Added support for code blocks as argument
 - 0.3: Ruby 1.9 is supported
 - 0.2: Make assert_same useful as a standalone gem. Bugfixes

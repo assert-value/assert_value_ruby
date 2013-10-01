@@ -2,7 +2,7 @@ require 'rubygems'
 
 SPEC = Gem::Specification.new do |s|
     s.name        = "assert_same"
-    s.version     = "0.6.1"
+    s.version     = "0.7.0"
     s.author      = "Pluron, Inc."
     s.email       = "support@pluron.com"
     s.homepage    = "http://github.com/acunote/assert_same"

@@ -58,7 +58,13 @@ unless defined? internal_error
 end
 
 
-module Test::Unit::Assertions
+test_unit_module = if RUBY_VERSION >= "1.9.0"
+    Object.const_get('MiniTest').const_get('Assertions')
+else
+    Object.const_get('Test').const_get('Unit').const_get('Assertions')
+end
+
+test_unit_module.module_eval do
 
     #Hash[filename][line_number] = offset
     #For each line in the original file we store its offset (+N or -N lines)

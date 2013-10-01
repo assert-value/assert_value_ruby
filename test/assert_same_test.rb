@@ -85,3 +85,14 @@ class AssertSameTest < Test::Unit::TestCase
     end
 
 end
+
+
+class AssertSameMiniTest < MiniTest::Unit::TestCase
+
+    def test_basic_assert_same
+        assert_same "foo", <<-END
+            foo
+        END
+    end
+
+end
