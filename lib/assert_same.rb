@@ -69,7 +69,7 @@ test_unit_module.module_eval do
     #Hash[filename][line_number] = offset
     #For each line in the original file we store its offset (+N or -N lines)
     #relative to the actual file
-    @@file_offsets = Hash.new { |hash, key| hash[key] = {} }
+    class_variable_set(:@@file_offsets, Hash.new { |hash, key| hash[key] = {} })
 
     # assert_same: assert which checks that two strings (expected and actual) are same
     # and which can "magically" replace expected value with the actual in case
