@@ -86,6 +86,7 @@ class AssertSameTest < Test::Unit::TestCase
 
 end
 
+if RUBY_VERSION >= "1.9.0"
 
 class AssertSameMiniTest < MiniTest::Unit::TestCase
 
@@ -94,5 +95,7 @@ class AssertSameMiniTest < MiniTest::Unit::TestCase
             foo
         END
     end
+
+end
 
 end
