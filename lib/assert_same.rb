@@ -66,10 +66,9 @@ end
 
 test_unit_module.module_eval do
 
-    #Hash[filename][line_number] = offset
-    #For each line in the original file we store its offset (+N or -N lines)
-    #relative to the actual file
-    class_variable_set(:@@file_offsets, Hash.new { |hash, key| hash[key] = {} })
+    def file_offsets
+      @file_offsets ||= Hash.new { |hash, key| hash[key] = {} }
+    end
 
     # assert_same: assert which checks that two strings (expected and actual) are same
     # and which can "magically" replace expected value with the actual in case
@@ -300,8 +299,8 @@ private
         source = File.readlines(File::expand_path(file))
 
         # file may be changed by previous accepted assert_same's, adjust line numbers
-        offset = @@file_offsets[file].keys.inject(0) do |sum, i|
-            line.to_i >= i ? sum + @@file_offsets[file][i] : sum
+        offset = file_offsets[file].keys.inject(0) do |sum, i|
+            line.to_i >= i ? sum + file_offsets[file][i] : sum
         end
 
         expected_text_end_line = expected_text_start_line = line.to_i + offset
@@ -339,7 +338,7 @@ private
         # recalculate line number adjustments
         actual_length = actual.split("\n").length
         actual_length += 1 if change == :create_expected_string # END marker after expected value
-        @@file_offsets[file][line.to_i] = actual_length - expected_length
+        file_offsets[file][line.to_i] = actual_length - expected_length
 
         source_file = File.open(file, "w+")
         source_file.write(source.join(''))
