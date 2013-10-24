@@ -3,6 +3,7 @@ require 'assert_value'
 describe "Assert Value" do
 
   it "compares with value in file" do
+    assert_value("foo", :log => 'test/logs/assert_value_with_files.log.ref')
     expect(assert_value("foo", :log => 'test/logs/assert_value_with_files.log.ref')).to eq(true)
   end
 
