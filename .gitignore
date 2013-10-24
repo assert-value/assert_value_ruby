@@ -3,3 +3,4 @@
 pkg
 .kdev4
 Gemfile.lock
+.bundle
