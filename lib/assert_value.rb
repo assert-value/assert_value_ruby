@@ -406,3 +406,9 @@ else
         include AssertValueAssertion
     end
 end
+
+if defined?(RSpec)
+    RSpec.configure do |c|
+        c.include AssertValueAssertion
+    end
+end

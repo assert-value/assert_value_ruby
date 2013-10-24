@@ -1,7 +1,8 @@
 require 'rake'
 require 'rake/testtask'
 require 'rdoc/task'
-require 'bundler'
+require 'bundler/setup'
+require 'rspec/core/rake_task'
 
 Bundler::GemHelper.install_tasks
 
@@ -13,6 +14,11 @@ Rake::TestTask.new(:test) do |t|
   t.libs << 'lib'
   t.pattern = 'test/**/*_test.rb'
   t.verbose = true
+end
+
+desc "Run the specs."
+RSpec::Core::RakeTask.new do |t|
+  t.pattern = "test/**/*_spec.rb"
 end
 
 desc 'Generate documentation for assert_value.'
