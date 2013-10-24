@@ -57,13 +57,7 @@ unless defined? internal_error
 end
 
 
-test_unit_module = if RUBY_VERSION >= "1.9.0"
-    Object.const_get('MiniTest').const_get('Assertions')
-else
-    Object.const_get('Test').const_get('Unit').const_get('Assertions')
-end
-
-test_unit_module.module_eval do
+module AssertValueAssertion
 
     def file_offsets
       @file_offsets ||= Hash.new { |hash, key| hash[key] = {} }
@@ -401,4 +395,14 @@ private
         [file, method, line]
     end
 
+end
+
+if RUBY_VERSION >= "1.9.0"
+    class MiniTest::Unit::TestCase
+        include AssertValueAssertion
+    end
+else
+    class Test::Unit::TestCase
+        include AssertValueAssertion
+    end
 end
