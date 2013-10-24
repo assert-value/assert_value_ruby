@@ -18,7 +18,6 @@ if RUBY_VERSION >= "1.9.0"
                 super
                 parser.on '--no-interactive', 'assert_value: non-interactive mode' do |flag|
                     $assert_value_options << "--no-interactive"
-                    puts $assert_value_options
                 end
                 parser.on '--no-canonicalize', 'assert_value: turn off canonicalization' do |flag|
                     $assert_value_options << "--no-canonicalize"
