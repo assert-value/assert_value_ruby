@@ -1,12 +1,10 @@
-assert_value
-===========
+# assert_value
 
-Checks that two strings are same and "magically" replace expected value 
+Checks that two values are same and "magically" replaces expected value
 with the actual in case the new behavior (and new actual value) is correct.
 Support two kind of arguments: string and code block.
 
-String Example:
----------------
+## String Example:
 
 It is better to start with no expected value
 
@@ -26,10 +24,9 @@ If you accept the new value your test will be automatically modified to
         foo
     END
 
-Block Example:
---------------
+## Block Example:
 
-assert_value supports code block as argument. If executed block raise exception
+assert_value supports code block as argument. If executed block raises exception then
 exception message is returned as actual value:
 
     assert_value do
@@ -43,7 +40,7 @@ Run tests
     +Exception NoMethodError: undefined method `+' for nil:NilClass
     Accept the new value: yes to all, no to all, yes, no? [Y/N/y/n] (y): 
 
-After new value is accepted
+After the new value is accepted you get
 
     assert_value(<<-END) do
         Exception NoMethodError: undefined method `+' for nil:NilClass
@@ -51,8 +48,7 @@ After new value is accepted
         nil + 1
     end
 
-Options:
---------
+## Options:
 
     --no-interactive skips all questions and just reports failures
     --autoaccept prints diffs and automatically accepts all new actual values
@@ -70,8 +66,7 @@ In Ruby 1.9:
     ruby test/unit/foo_test.rb --autoaccept
     rake test TESTOPTS="--autoaccept"
 
-Canonicalization:
------------------
+## Canonicalization:
 
 Before comparing expected and actual strings, assert_value canonicalizes both using these rules:
 
@@ -93,8 +88,8 @@ In Ruby 1.9:
     rake test TESTOPTS="--no-canonicalize --autoaccept"
 
 
-Changelog
----------
+## Changelog
+
 - 1.0: Rename to assert_value
 - 0.7: Support Ruby 1.9's MiniTest
 - 0.6: Support test execution on Mac
