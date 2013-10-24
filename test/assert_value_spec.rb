@@ -14,6 +14,18 @@ describe "Assert Value" do
     assert_value "foo", <<-END
         foo
     END
+
+    expect(
+      assert_value "foo", <<-END
+          foo
+      END
+    ).to eq(true)
+
+    expect(assert_value(<<-END) do
+        foo
+    END
+      "foo"
+    end).to eq(true)
   end
 
 end
