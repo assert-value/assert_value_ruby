@@ -2,7 +2,7 @@
 
 require 'array_diff'
 
-module AssertSame
+module AssertValue
 
 class TextDiff
 

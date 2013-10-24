@@ -1,4 +1,4 @@
-assert_same
+assert_value
 ===========
 
 Checks that two strings are same and "magically" replace expected value 
@@ -10,7 +10,7 @@ String Example:
 
 It is better to start with no expected value
 
-    assert_same "foo"
+    assert_value "foo"
 
 Then run tests as usual with "rake test". As a result you will see
 diff between expected and actual values:
@@ -22,17 +22,17 @@ diff between expected and actual values:
 
 If you accept the new value your test will be automatically modified to
 
-    assert_same "foo", <<-END
+    assert_value "foo", <<-END
         foo
     END
 
 Block Example:
 --------------
 
-assert_same supports code block as argument. If executed block raise exception
+assert_value supports code block as argument. If executed block raise exception
 exception message is returned as actual value:
 
-    assert_same do
+    assert_value do
         nil+1
     end
 
@@ -45,7 +45,7 @@ Run tests
 
 After new value is accepted
 
-    assert_same(<<-END) do
+    assert_value(<<-END) do
         Exception NoMethodError: undefined method `+' for nil:NilClass
     END
         nil + 1
@@ -73,7 +73,7 @@ In Ruby 1.9:
 Canonicalization:
 -----------------
 
-Before comparing expected and actual strings, assert_same canonicalizes both using these rules:
+Before comparing expected and actual strings, assert_value canonicalizes both using these rules:
 
 - indentation is ignored (except for indentation  relative to the first line of the expected/actual string)
 - ruby-style comments after "#" are ignored
@@ -95,6 +95,7 @@ In Ruby 1.9:
 
 Changelog
 ---------
+- 1.0: Rename to assert_value
 - 0.7: Support Ruby 1.9's MiniTest
 - 0.6: Support test execution on Mac
 - 0.5: Support code blocks to assert_same
