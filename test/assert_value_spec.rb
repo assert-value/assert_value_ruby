@@ -1,9 +1,5 @@
 require 'assert_value'
 
-RSpec.configure do |c|
-    c.include AssertValueAssertion
-end
-
 describe "Assert Value" do
 
   it "compares with value in file" do
