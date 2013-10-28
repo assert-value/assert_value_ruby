@@ -60,7 +60,7 @@ end
 module AssertValueAssertion
 
     def file_offsets
-      @file_offsets ||= Hash.new { |hash, key| hash[key] = {} }
+      @@file_offsets ||= Hash.new { |hash, key| hash[key] = {} }
     end
 
     # assert_value: assert which checks that two strings (expected and actual) are same
