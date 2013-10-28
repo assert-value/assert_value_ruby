@@ -4,7 +4,9 @@ Checks that two values are same and "magically" replaces expected value
 with the actual in case the new behavior (and new actual value) is correct.
 Support two kind of arguments: string and code block.
 
-## String Example:
+This check works with both Test/Unit and RSpec. See documentation and examples below:
+
+## Testing String Values
 
 It is better to start with no expected value
 
@@ -24,9 +26,9 @@ If you accept the new value your test will be automatically modified to
         foo
     END
 
-## Block Example:
+## Testing Block Values
 
-assert_value supports code block as argument. If executed block raises exception then
+assert_value can take code block as an argument. If executed block raises exception then
 exception message is returned as actual value:
 
     assert_value do
@@ -48,7 +50,13 @@ After the new value is accepted you get
         nil + 1
     end
 
-## Options:
+## Testing Values Stored in Files
+
+Sometimes test string is too large to be inlined into the test source. Put it into the file instead:
+
+    assert_value "foo", log: 'test/log/reference.txt'
+
+## Additional Test/Unit Options:
 
     --no-interactive skips all questions and just reports failures
     --autoaccept prints diffs and automatically accepts all new actual values
@@ -65,6 +73,29 @@ In Ruby 1.9:
 
     ruby test/unit/foo_test.rb --autoaccept
     rake test TESTOPTS="--autoaccept"
+
+## RSpec
+
+In specs you can either call assert_value directly or use "be_same_value_as" matcher:
+
+    describe "spec with be_same_value_as matcher" do
+        it "compares with inline value" do
+            expect("foo").to be_same_value_as <<-END
+                foo
+            END
+        end
+
+        it "compares with inline block" do
+            expect { "foo" }.to be_same_value_as <<-END
+                foo
+            END
+        end
+
+        it "compares with value in file" do
+            expect("foo").to be_same_value_as(:log => 'test/logs/assert_value_with_files.log.ref')
+        end
+    end
+
 
 ## Canonicalization:
 
@@ -90,6 +121,7 @@ In Ruby 1.9:
 
 ## Changelog
 
+- 1.1: RSpec support
 - 1.0: Rename to assert_value
 - 0.7: Support Ruby 1.9's MiniTest
 - 0.6: Support test execution on Mac

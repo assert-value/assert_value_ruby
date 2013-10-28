@@ -2,27 +2,42 @@ require 'assert_value'
 
 describe "Assert Value" do
 
-  it "compares with value in file" do
-    assert_value("foo", :log => 'test/logs/assert_value_with_files.log.ref')
-    expect(assert_value("foo", :log => 'test/logs/assert_value_with_files.log.ref')).to eq(true)
-  end
+    describe "true rspec blessed way" do
+        it "compares with inline value" do
+            expect("foo").to be_same_value_as <<-END
+                foo
+            END
+        end
 
-  it "compares with value inlined in source file" do
-    assert_value "foo", <<-END
-        foo
-    END
+        it "compares with inline block" do
+            expect { "foo" }.to be_same_value_as <<-END
+                foo
+            END
+        end
 
-    expect(
-      assert_value "foo", <<-END
-          foo
-      END
-    ).to eq(true)
+        it "compares with value in file" do
+            expect("foo").to be_same_value_as(:log => 'test/logs/assert_value_with_files.log.ref')
+        end
+    end
 
-    expect(assert_value(<<-END) do
-        foo
-    END
-      "foo"
-    end).to eq(true)
-  end
+    describe "test/unit way is also supported" do
+        it "compares with inline value" do
+            assert_value "foo", <<-END
+                foo
+            END
+        end
+
+        it "compares with inline block" do
+            assert_value(<<-END) do
+                foo
+            END
+                "foo"
+            end
+        end
+
+        it "compares with value in file" do
+            assert_value("foo", :log => 'test/logs/assert_value_with_files.log.ref')
+        end
+    end
 
 end

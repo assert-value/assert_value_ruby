@@ -167,7 +167,9 @@ module AssertValueAssertion
     #   assert_value, run tests and they will fill expected values for you automatically
     def assert_value(*args)
         if block_given?
-            mode = :block
+            # rspec passes block to the expect() function, not to the matcher
+            # so string substitution should work as if assert_value is called with a string
+            mode = @rspec_matcher ? :scalar : :block
             expected = args[0]
             actual = ""
             begin
@@ -250,6 +252,10 @@ module AssertValueAssertion
         end
     end
 
+    def be_same_value_as(expected = nil)
+      BeSameValueAs.new(expected)
+    end
+
 private
 
     def succeed
@@ -282,7 +288,8 @@ private
     # change - what to do with expected value (:create_expected_string or :update_expected_string)
     # mode   - describes signature of assert_value call by type of main argument (:block or :scalar)
     def accept_string(actual, change, mode)
-        file, method, line = get_caller_location(:depth => 3)
+        depth = @rspec_matcher ? 6 : 3
+        file, method, line = get_caller_location(:depth => depth)
 
         # read source file, construct the new source, replacing everything
         # between "do" and "end" in assert_value's block
@@ -315,7 +322,8 @@ private
         if change == :create_expected_string 
             if mode == :scalar
                 # add second argument to assert_value if it's omitted
-                source[expected_text_start_line-1] = "#{source[expected_text_start_line-1].chop}, <<-END\n"
+                comma = "," unless @rspec_matcher
+                source[expected_text_start_line-1] = "#{source[expected_text_start_line-1].chop}#{comma} <<-END\n"
             elsif mode == :block
                 # add expected value as argument to assert_value before block call
                 source[expected_text_start_line-1] = source[expected_text_start_line-1].sub(/assert_value(\(.*?\))*/, "assert_value(<<-END)")
@@ -406,6 +414,33 @@ else
         include AssertValueAssertion
     end
 end
+
+# RSpec matcher for assert_value
+class BeSameValueAs
+    include AssertValueAssertion
+
+    def initialize(expected)
+        @expected = expected
+        @rspec_matcher = true
+    end
+
+    def matches?(target)
+      if target.is_a? Proc
+          assert_value @expected, &target
+      else
+          assert_value target, @expected
+      end
+    end
+
+    def failure_message_for_should
+        "expected to be the same"
+    end
+
+    def failure_message_for_should_not
+        "expected not to be the same"
+    end
+end
+
 
 if defined?(RSpec)
     RSpec.configure do |c|
