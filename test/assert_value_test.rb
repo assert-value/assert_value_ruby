@@ -1,9 +1,14 @@
 # Copyright (c) 2011 Pluron, Inc.
 
-require 'test/unit'
+begin
+    require 'minitest/autorun'
+rescue LoadError
+    require 'test/unit'
+end
+
 require 'assert_value'
 
-class AssertValueTest < Test::Unit::TestCase
+class AssertValueTest < ( defined?(Minitest) ? Minitest::Test : Test::Unit::TestCase )
 
     def test_basic_assert_value
         assert_value "foo", <<-END
@@ -88,7 +93,7 @@ end
 
 if RUBY_VERSION >= "1.9.0"
 
-class AssertValueMiniTest < MiniTest::Unit::TestCase
+class AssertValueMiniTest < (defined?(Minitest) ? Minitest::Test : MiniTest::Unit::TestCase)
 
     def test_basic_assert_value
         assert_value "foo", <<-END

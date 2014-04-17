@@ -121,6 +121,7 @@ In Ruby 1.9:
 
 ## Changelog
 
+- 1.2: Rails 4.1 and minitest gem support
 - 1.1: RSpec support
 - 1.0: Rename to assert_value
 - 0.7: Support Ruby 1.9's MiniTest

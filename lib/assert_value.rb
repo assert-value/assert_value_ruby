@@ -1,11 +1,17 @@
 # Copyright (c) 2010-2011 Pluron, Inc.
-require 'test/unit/testcase'
+
+if defined?(Minitest)
+    # nothing to require, minitest gem is already loaded
+    # it's the only way we can detect Minitest presence
+else
+    require 'test/unit/testcase'
+end
 require 'text_diff'
 require 'pathname'
 
 $assert_value_options = []
 
-if RUBY_VERSION >= "1.9.0"
+if RUBY_VERSION >= "1.9.0" and !defined?(Minitest)  # minitest options are handled by minitest/assert_value_plugin.rb
 
     # Test/Unit from Ruby 1.9 can't accept additional options like it did in 1.8:
     #   ruby test.rb -- --foo
@@ -406,8 +412,14 @@ private
 end
 
 if RUBY_VERSION >= "1.9.0"
-    class MiniTest::Unit::TestCase
-        include AssertValueAssertion
+    if defined? Minitest::Test
+      class Minitest::Test
+          include AssertValueAssertion
+      end
+    else
+      class MiniTest::Unit::TestCase
+          include AssertValueAssertion
+      end
     end
 else
     class Test::Unit::TestCase
