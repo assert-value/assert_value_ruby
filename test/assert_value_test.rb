@@ -1,9 +1,10 @@
 # Copyright (c) 2011 Pluron, Inc.
 
-require 'assert_value'
 require 'test/unit'
+# require 'minitest/autorun'    # uncomment to test with minitest 5.x gem (enable it in Gemfile too)
+require 'assert_value'
 
-class AssertValueTest < Test::Unit::TestCase
+class AssertValueTest < ASSERT_VALUE_TEST_FRAMEWORK == :new_minitest ? Minitest::Test : Test::Unit::TestCase
 
     def test_basic_assert_value
         assert_value "foo", <<-END
@@ -83,19 +84,5 @@ class AssertValueTest < Test::Unit::TestCase
         assert_value(<<-END) do nil end
         END
     end
-
-end
-
-if RUBY_VERSION >= "1.9.0"
-
-class AssertValueMiniTest < Test::Unit::TestCase
-
-    def test_basic_assert_value
-        assert_value "foo", <<-END
-            foo
-        END
-    end
-
-end
 
 end

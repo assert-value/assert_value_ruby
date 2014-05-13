@@ -1,22 +1,33 @@
 # Copyright (c) 2010-2011 Pluron, Inc.
 
-if defined?(Minitest)
-    # nothing to require, minitest gem is already loaded
-    # it's the only way we can detect Minitest presence
+# there're 3 types of test frameworks we support
+# 1) test/unit from Ruby 1.8
+# 2) old minitest 2.x-4.x, either bundled with Ruby 1.9 - 2.1 or installed via gem
+# 3) new minitest 5.x from minitest gem (required for example by Rails 4.1)
+
+if defined?(Minitest) and Minitest.const_defined?("VERSION") and Minitest::VERSION >= "5.0.0"
+    ASSERT_VALUE_TEST_FRAMEWORK = :new_minitest
+elsif defined?(MiniTest)
+    ASSERT_VALUE_TEST_FRAMEWORK = :old_minitest
+elsif defined?(Test)
+    ASSERT_VALUE_TEST_FRAMEWORK = :test_unit
 else
-    require 'test/unit/testcase'
+    raise LoadError.new("Require assert_value after 'test/unit' or 'minitest/autorun'")
 end
+
 require 'text_diff'
 require 'pathname'
 
 $assert_value_options = []
 
-if RUBY_VERSION >= "1.9.0" and !defined?(Minitest)  # minitest options are handled by minitest/assert_value_plugin.rb
+if ASSERT_VALUE_TEST_FRAMEWORK == :new_minitest
+    # minitest options are handled by minitest/assert_value_plugin.rb that is required automatically
 
-    # Test/Unit from Ruby 1.9 can't accept additional options like it did in 1.8:
-    #   ruby test.rb -- --foo
-    # Now it has a strict option parser that considers all additional options as files.
-    # The right way to have an option now is to explicitly add it to Test/Unit parser.
+elsif ASSERT_VALUE_TEST_FRAMEWORK == :old_minitest and defined?(Test)
+    # Test/Unit from Ruby 1.9 has a strict option parser, need to explicitly add options there.
+    # 
+    # Note, this works only for tests that use 'test/unit'. 'minitest/autorun' in old versions
+    # is not powerful enough to accept custom options. This is fixed in minitest 5.0.
     module Test::Unit
 
         module AssertValueOption
@@ -44,9 +55,10 @@ if RUBY_VERSION >= "1.9.0" and !defined?(Minitest)  # minitest options are handl
 
     end
 
-else
+elsif ASSERT_VALUE_TEST_FRAMEWORK == :test_unit
 
     # In Ruby 1.8 additional test options are simply passed via ARGV
+    #   ruby test.rb -- --foo
     $assert_value_options << "--no-interactive" if ARGV.include?("--no-interactive")
     $assert_value_options << "--no-canonicalize" if ARGV.include?("--no-canonicalize")
     $assert_value_options << "--autoaccept" if ARGV.include?("--autoaccept")
@@ -411,17 +423,15 @@ private
 
 end
 
-if RUBY_VERSION >= "1.9.0"
-    if defined? Minitest::Test
-      class Minitest::Test
-          include AssertValueAssertion
-      end
-    else
-      class MiniTest::Unit::TestCase
-          include AssertValueAssertion
-      end
+if ASSERT_VALUE_TEST_FRAMEWORK == :new_minitest
+    class Minitest::Test
+        include AssertValueAssertion
     end
-else
+elsif ASSERT_VALUE_TEST_FRAMEWORK == :old_minitest
+    class MiniTest::Unit::TestCase
+        include AssertValueAssertion
+    end
+elsif ASSERT_VALUE_TEST_FRAMEWORK == :test_unit
     class Test::Unit::TestCase
         include AssertValueAssertion
     end
