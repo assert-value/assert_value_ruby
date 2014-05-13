@@ -5,10 +5,6 @@
 # with .gemspec dependency on minitest
 begin
     require 'minitest/unit'
-    unless defined?(Minitest) and Minitest.const_defined?("VERSION") and Minitest::VERSION >= "5.0.0"
-        # older minitest versions can be combined with test/unit to support overridable command line options
-        require 'test/unit'
-    end
 rescue LoadError
     require 'test/unit'
 end
