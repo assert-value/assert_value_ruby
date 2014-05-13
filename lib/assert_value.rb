@@ -277,28 +277,33 @@ module AssertValueAssertion
 private
 
     def succeed
-        if RUBY_VERSION < "1.9.0"
-            add_assertion
-        else
-            true
+        increment_assertion_count
+        true
+    end
+
+    def increment_assertion_count
+        case ASSERT_VALUE_TEST_FRAMEWORK
+            when :new_minitest then self.assertions += 1
+            when :old_minitest then self._assertions += 1
+            when :test_unit    then add_assertion
         end
     end
 
     def soft_fail(diff)
-        if RUBY_VERSION < "1.9.0"
-            failure = Test::Unit::Failure.new(name, filter_backtrace(caller(0)), diff)
-            puts "\n#{failure}"
-        else
+        if [:new_minitest, :old_minitest].include?(ASSERT_VALUE_TEST_FRAMEWORK)
             failure = MiniTest::Assertion.new(diff)
-            puts "\n#{failure}"
+        else
+            failure = Test::Unit::Failure.new(name, filter_backtrace(caller(0)), diff)
         end
+        puts "\n#{failure}"
     end
 
     def fail(diff)
-        if RUBY_VERSION < "1.9.0"
-            raise Test::Unit::AssertionFailedError.new(diff)
-        else
+        increment_assertion_count
+        if [:new_minitest, :old_minitest].include?(ASSERT_VALUE_TEST_FRAMEWORK)
             raise MiniTest::Assertion.new(diff)
+        else
+            raise Test::Unit::AssertionFailedError.new(diff)
         end
     end
 
