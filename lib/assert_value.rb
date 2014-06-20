@@ -291,6 +291,7 @@ private
     end
 
     def increment_assertion_count
+        return if @rspec_matcher or self.class.name =~ /RSpec/
         case ASSERT_VALUE_TEST_FRAMEWORK
             when :new_minitest then self.assertions += 1
             when :old_minitest then self._assertions += 1
