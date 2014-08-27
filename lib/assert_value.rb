@@ -226,7 +226,7 @@ module AssertValueAssertion
             expected = File.exists?(log_file) ? File.read(log_file) : ""
             change = :update_file_with_expected_string
         else
-            internal_error("Invalid expected class #{excepted.class}")
+            internal_error("Invalid expected class #{expected.class}")
         end
 
         # interactive mode is turned on by default, except when
