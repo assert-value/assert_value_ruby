@@ -5,5 +5,5 @@ group :development, :test do
   gem 'rdoc'
   gem 'minitest', '4.7.5'
   gem 'test-unit-minitest'
-  gem 'rspec', '~> 2.99.0'
+  gem 'rspec'
 end
