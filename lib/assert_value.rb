@@ -476,6 +476,10 @@ class BeSameValueAs
     def failure_message_for_should_not
         "expected not to be the same"
     end
+
+    def supports_block_expectations?
+        true
+    end
 end
 
 
