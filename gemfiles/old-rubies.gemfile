@@ -5,6 +5,5 @@ gemspec
 group :development, :test do
   gem 'rake'
   gem 'rdoc'
-  gem 'test-unit'
-  gem 'rspec'
+  gem 'rspec', '~> 2.99.0'
 end
