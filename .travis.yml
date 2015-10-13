@@ -1,4 +1,6 @@
 language: ruby
+
+# rvm: and gemfile: below define build matrix
 rvm:
   - 1.8.7
   - 1.9.3
@@ -6,10 +8,23 @@ rvm:
 gemfile:
   - Gemfile
   - gemfiles/minitest.4.7.5.gemfile
+
+# Execute Ruby RSpec and Test::Unit tests
 script:
   - bundle exec rake test
   - bundle exec rspec test
+
+# Travis does not support whitelist to specify build matrix
+# It only gives the way to include/exclude some builds from
+# already populated matrix configured above
+# To emulate whitelist we erase build matrix for all ruby
+# versions and include builds we need
 matrix:
+  exclude:
+    - rvm: 1.8.7
+    - rvm: 1.9.3
+    - rvm: 2.2.2
+  # Fill matrix
   include:
     - rvm: 1.8.7
       gemfile: Gemfile
