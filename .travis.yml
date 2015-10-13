@@ -9,6 +9,7 @@ rvm:
 gemfile:
   - Gemfile
   - gemfiles/old-rubies.gemfile
+  - gemfiles/rspec.2.99.gemfile
   - gemfiles/minitest.4.7.5.gemfile
 
 # Execute Ruby RSpec and Test::Unit tests
@@ -31,8 +32,14 @@ matrix:
   include:
     - rvm: 1.8.7
       gemfile: gemfiles/old-rubies.gemfile
+    - rvm: 1.8.7
+      gemfile: gemfiles/rspec.2.99.gemfile
+      script: bundle exec rspec test
     - rvm: 1.9.3
       gemfile: gemfiles/old-rubies.gemfile
+    - rvm: 1.9.3
+      gemfile: gemfiles/rspec.2.99.gemfile
+      script: bundle exec rspec test
     - rvm: 2.2.2
       gemfile: gemfiles/minitest.4.7.5.gemfile
     - rvm: 2.2.2
