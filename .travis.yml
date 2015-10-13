@@ -37,9 +37,6 @@ matrix:
       gemfile: gemfiles/minitest.4.7.5.gemfile
     - rvm: 2.2.2
       gemfile: Gemfile
-    - rvm: 2.2.2
-      gemfile: Gemfile
-      script: bundle exec rspec test
     - rvm: 2.2.3
       gemfile: gemfiles/minitest.4.7.5.gemfile
     - rvm: 2.2.3
