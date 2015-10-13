@@ -1,0 +1,11 @@
+source 'https://rubygems.org'
+
+gemspec
+
+group :development, :test do
+  gem 'rake'
+  gem 'rdoc'
+  gem 'minitest', '4.7.5'
+  gem 'test-unit-minitest'
+  gem 'rspec', '~> 2.99.0'
+end
