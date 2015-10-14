@@ -121,6 +121,8 @@ In Ruby 1.9:
 
 ## Changelog
 
+- 1.5: Improve support for various testing frameworks and Ruby versions:
+       Ruby 2.2.2, 2.2.3, RSpec 2.x, 3.x, Test::Unit 2.x, 3.x, Minitest 4.x, 5.x
 - 1.4: Fix RSpec support
 - 1.3: Improve support for various testing frameworks, fix assertion counters
 - 1.2: Rails 4.1 and minitest gem support
