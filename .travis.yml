@@ -6,20 +6,6 @@ rvm:
   - 1.9.3
   - 2.2.2
   - 2.2.3
-gemfile:
-  # Old gems support
-  - gemfiles/old-rubies.gemfile
-  - gemfiles/rspec.2.99.gemfile
-  - gemfiles/minitest.4.7.5.gemfile
-  # Latest gems
-  - gemfiles/minitest.gemfile
-  - gemfiles/test-unit.gemfile
-  - gemfiles/rspec.gemfile
-
-# Execute Ruby RSpec and Test::Unit tests
-script:
-  - bundle exec rake test
-  - bundle exec rspec test
 
 # Travis does not support whitelist to specify build matrix
 # It only gives the way to include/exclude some builds from
@@ -60,7 +46,7 @@ matrix:
       script: bundle exec rake test
     - rvm: 2.2.2
       gemfile: gemfiles/rspec.gemfile
-      script: bundle exec rspec test
+      script: bundle exec rake spec
     - rvm: 2.2.3
       gemfile: gemfiles/rspec.2.99.gemfile
       script: bundle exec rspec test
@@ -75,4 +61,4 @@ matrix:
       script: bundle exec rake test
     - rvm: 2.2.3
       gemfile: gemfiles/rspec.gemfile
-      script: bundle exec rspec test
+      script: bundle exec rake spec
