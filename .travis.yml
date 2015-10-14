@@ -1,6 +1,5 @@
 language: ruby
 
-# rvm: and gemfile: below define build matrix
 rvm:
   - 1.8.7
   - 1.9.3
@@ -9,7 +8,7 @@ rvm:
 
 gemfile: Gemfile
 
-# Test for gem collections we currently support
+# Test for various gem versions we currently support
 matrix:
   include:
     - rvm: 1.8.7
