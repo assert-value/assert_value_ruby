@@ -1,26 +1,23 @@
 # Copyright (c) 2010-2011 Pluron, Inc.
 
-# make sure test/unit or minitest is loaded before assert_value
+# there're 4 types of test frameworks we support
+# 1) Test::Unit from Ruby <= 1.8.7 and Ruby >= 2.2.2
+# 2) Minitest 2.x-4.x, either bundled with Ruby 1.9 - 2.1 or installed via gem
+# 3) Minitest > 5.0 bundles with Ruby >= 2.2.2 or installed via gem
+# 4) RSpec
 begin
-    # new Minitest
-    require 'minitest/autorun'
+    require 'minitest/autorun' # Minitest 5.x
 rescue LoadError
     begin
-        # old Minitest
-        require 'minitest/unit'
+        require 'minitest/unit' # old Minitest
     rescue LoadError
         begin
-            require 'test/unit'
+            require 'test/unit' # Test::Unit
         rescue LoadError
-            raise "Unable to load Minitest or Test::Unit"
+            # RSpec only
         end
     end
 end
-
-# there're 3 types of test frameworks we support
-# 1) test/unit from Ruby 1.8
-# 2) old minitest 2.x-4.x, either bundled with Ruby 1.9 - 2.1 or installed via gem
-# 3) new minitest 5.x from minitest gem (required for example by Rails 4.1)
 
 if defined?(Minitest) and Minitest.const_defined?("VERSION") and Minitest::VERSION >= "5.0.0"
     ASSERT_VALUE_TEST_FRAMEWORK = :new_minitest
@@ -29,7 +26,7 @@ elsif defined?(MiniTest)
 elsif defined?(Test)
     ASSERT_VALUE_TEST_FRAMEWORK = :test_unit
 else
-    raise LoadError.new("Require assert_value after 'test/unit' or 'minitest/autorun'")
+    ASSERT_VALUE_TEST_FRAMEWORK = :rspec_only
 end
 
 require 'text_diff'
