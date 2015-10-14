@@ -1,4 +1,4 @@
-# Copyright (c) 2010-2011 Pluron, Inc.
+# Copyright (c) 2010-2015 Pluron, Inc.
 
 # there're 4 types of test frameworks we support
 # 1) Test::Unit from Ruby <= 1.8.7 and Ruby >= 2.2.2

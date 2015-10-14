@@ -1,4 +1,4 @@
-# Copyright (c) 2011 Pluron, Inc.
+# Copyright (c) 2011-2015 Pluron, Inc.
 
 require 'assert_value'
 
