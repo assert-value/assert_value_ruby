@@ -7,10 +7,12 @@ rvm:
   - 2.2.2
   - 2.2.3
 gemfile:
+  # Old gems support
   - gemfiles/old-rubies.gemfile
   - gemfiles/rspec.2.99.gemfile
   - gemfiles/minitest.4.7.5.gemfile
   # Latest gems
+  - gemfiles/minitest.gemfile
   - gemfiles/test-unit.gemfile
   - gemfiles/rspec.gemfile
 
@@ -45,7 +47,13 @@ matrix:
       gemfile: gemfiles/rspec.2.99.gemfile
       script: bundle exec rspec test
     - rvm: 2.2.2
+      gemfile: gemfiles/rspec.2.99.gemfile
+      script: bundle exec rspec test
+    - rvm: 2.2.2
       gemfile: gemfiles/minitest.4.7.5.gemfile
+      script: bundle exec rake test
+    - rvm: 2.2.2
+      gemfile: gemfiles/minitest.gemfile
       script: bundle exec rake test
     - rvm: 2.2.2
       gemfile: gemfiles/test-unit.gemfile
@@ -54,7 +62,13 @@ matrix:
       gemfile: gemfiles/rspec.gemfile
       script: bundle exec rspec test
     - rvm: 2.2.3
+      gemfile: gemfiles/rspec.2.99.gemfile
+      script: bundle exec rspec test
+    - rvm: 2.2.3
       gemfile: gemfiles/minitest.4.7.5.gemfile
+      script: bundle exec rake test
+    - rvm: 2.2.2
+      gemfile: gemfiles/minitest.gemfile
       script: bundle exec rake test
     - rvm: 2.2.3
       gemfile: gemfiles/test-unit.gemfile
