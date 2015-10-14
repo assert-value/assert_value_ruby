@@ -2,7 +2,11 @@ require 'rake'
 require 'rake/testtask'
 require 'rdoc/task'
 require 'bundler/setup'
-require 'rspec/core/rake_task'
+begin
+  require 'rspec/core/rake_task'
+rescue LoadError
+  # RSpec gem is not installed
+end
 
 Bundler::GemHelper.install_tasks
 
@@ -16,9 +20,11 @@ Rake::TestTask.new(:test) do |t|
   t.verbose = true
 end
 
-desc "Run the specs."
-RSpec::Core::RakeTask.new do |t|
-  t.pattern = "test/**/*_spec.rb"
+if defined?(RSpec)
+  desc "Run the specs."
+  RSpec::Core::RakeTask.new do |t|
+    t.pattern = "test/**/*_spec.rb"
+  end
 end
 
 desc 'Generate documentation for assert_value.'
