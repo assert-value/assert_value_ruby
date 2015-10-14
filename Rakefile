@@ -26,7 +26,9 @@ if defined?(RSpec)
   RSpec::Core::RakeTask.new(:spec) do |t|
     t.pattern = "test/**/*_spec.rb"
   end
+end
 
+if defined?(RSpec) and RUBY_VERSION > '1.9.3'
   desc 'Default: run specs.'
   task :default => :spec
 else
