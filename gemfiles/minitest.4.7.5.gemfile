@@ -1,8 +1,7 @@
 source 'https://rubygems.org'
 
-gemspec
-
 group :development, :test do
   gem 'rake'
-  gem 'rspec'
+  gem 'minitest', '4.7.5'
+  gem 'test-unit-minitest'
 end

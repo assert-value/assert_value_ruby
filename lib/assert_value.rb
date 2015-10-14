@@ -1,18 +1,23 @@
-# Copyright (c) 2010-2011 Pluron, Inc.
+# Copyright (c) 2010-2015 Pluron, Inc.
 
-# make sure test/unit or minitest is loaded before assert_value
-# once Ruby 1.8 support is removed, we can replace this code
-# with .gemspec dependency on minitest
+# there're 4 types of test frameworks we support
+# 1) Test::Unit from Ruby <= 1.8.7 and Ruby >= 2.2.2
+# 2) Minitest 2.x-4.x, either bundled with Ruby 1.9 - 2.1 or installed via gem
+# 3) Minitest > 5.0 bundles with Ruby >= 2.2.2 or installed via gem
+# 4) RSpec
 begin
-    require 'minitest/unit'
+    require 'minitest/autorun' # Minitest 5.x
 rescue LoadError
-    require 'test/unit'
+    begin
+        require 'minitest/unit' # old Minitest
+    rescue LoadError
+        begin
+            require 'test/unit' # Test::Unit
+        rescue LoadError
+            # RSpec only
+        end
+    end
 end
-
-# there're 3 types of test frameworks we support
-# 1) test/unit from Ruby 1.8
-# 2) old minitest 2.x-4.x, either bundled with Ruby 1.9 - 2.1 or installed via gem
-# 3) new minitest 5.x from minitest gem (required for example by Rails 4.1)
 
 if defined?(Minitest) and Minitest.const_defined?("VERSION") and Minitest::VERSION >= "5.0.0"
     ASSERT_VALUE_TEST_FRAMEWORK = :new_minitest
@@ -21,7 +26,7 @@ elsif defined?(MiniTest)
 elsif defined?(Test)
     ASSERT_VALUE_TEST_FRAMEWORK = :test_unit
 else
-    raise LoadError.new("Require assert_value after 'test/unit' or 'minitest/autorun'")
+    ASSERT_VALUE_TEST_FRAMEWORK = :rspec_only
 end
 
 require 'text_diff'
@@ -469,12 +474,16 @@ class BeSameValueAs
       end
     end
 
-    def failure_message_for_should
+    def failure_message
         "expected to be the same"
     end
 
-    def failure_message_for_should_not
+    def failure_message_when_negated
         "expected not to be the same"
+    end
+
+    def supports_block_expectations?
+        true
     end
 end
 
