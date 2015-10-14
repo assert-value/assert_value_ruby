@@ -1,12 +1,20 @@
 # Copyright (c) 2010-2011 Pluron, Inc.
 
 # make sure test/unit or minitest is loaded before assert_value
-# once Ruby 1.8 support is removed, we can replace this code
-# with .gemspec dependency on minitest
 begin
-    require 'minitest/unit'
+    # new Minitest
+    require 'minitest/autorun'
 rescue LoadError
-    require 'test/unit'
+    begin
+        # old Minitest
+        require 'minitest/unit'
+    rescue LoadError
+        begin
+            require 'test/unit'
+        rescue LoadError
+            raise "Unable to load Minitest or Test::Unit"
+        end
+    end
 end
 
 # there're 3 types of test frameworks we support

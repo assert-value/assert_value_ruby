@@ -1,7 +1,5 @@
 # Copyright (c) 2011 Pluron, Inc.
 
-require 'test/unit'
-# require 'minitest/autorun'    # uncomment to test with minitest 5.x gem (enable it in Gemfile too)
 require 'assert_value'
 
 class AssertValueTest < ASSERT_VALUE_TEST_FRAMEWORK == :new_minitest ? Minitest::Test : Test::Unit::TestCase
