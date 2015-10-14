@@ -7,28 +7,24 @@ rvm:
   - 2.2.2
   - 2.2.3
 
-# Travis does not support whitelist to specify build matrix
-# It only gives the way to include/exclude some builds from
-# already populated matrix configured above
-# To emulate whitelist we erase build matrix for all ruby
-# versions and include builds we need
+gemfile: Gemfile
+
+# Test for gem collections we currently support
 matrix:
-  exclude:
-    - rvm: 1.8.7
-    - rvm: 1.9.3
-    - rvm: 2.2.2
-    - rvm: 2.2.3
-  # Fill matrix
   include:
     - rvm: 1.8.7
       gemfile: gemfiles/old-rubies.gemfile
-      # test latest 1.8.7 test/unit and latest rspec
+      script:
+        - bundle exec rake test
+        - bundle exec rspec test
     - rvm: 1.8.7
       gemfile: gemfiles/rspec.2.99.gemfile
       script: bundle exec rspec test
     - rvm: 1.9.3
       gemfile: gemfiles/old-rubies.gemfile
-      # test latest 1.8.7 test/unit and latest rspec
+      script:
+        - bundle exec rake test
+        - bundle exec rspec test
     - rvm: 1.9.3
       gemfile: gemfiles/rspec.2.99.gemfile
       script: bundle exec rspec test
