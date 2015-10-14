@@ -3,12 +3,10 @@ require 'rake/testtask'
 begin
   require 'rdoc/task'
 rescue LoadError
-  # RDoc is not installed
 end
 begin
   require 'rspec/core/rake_task'
 rescue LoadError
-  # RSpec gem is not installed
 end
 require 'bundler/setup'
 
