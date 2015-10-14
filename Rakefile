@@ -2,7 +2,7 @@ require 'rake'
 require 'rake/testtask'
 begin
   require 'rdoc/task'
-rescue
+rescue LoadError
   # RDoc is not installed
 end
 begin
