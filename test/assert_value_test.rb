@@ -2,7 +2,14 @@
 
 require 'assert_value'
 
-class AssertValueTest < ASSERT_VALUE_TEST_FRAMEWORK == :new_minitest ? Minitest::Test : Test::Unit::TestCase
+test_class = case ASSERT_VALUE_TEST_FRAMEWORK
+    when :new_minitest then Minitest::Test
+    when :old_minitest then MiniTest::Unit::TestCase
+    when :test_unit then Test::Unit::TestCase
+    else raise "Unknown test framework"
+end
+
+class AssertValueTest < test_class
 
     def test_basic_assert_value
         assert_value "foo", <<-END
