@@ -25,8 +25,10 @@ elsif defined?(MiniTest)
     ASSERT_VALUE_TEST_FRAMEWORK = :old_minitest
 elsif defined?(Test)
     ASSERT_VALUE_TEST_FRAMEWORK = :test_unit
-else
+elsif defined?(RSpec)
     ASSERT_VALUE_TEST_FRAMEWORK = :rspec_only
+else
+    raise "assert_value requires at least one of the minitest, test-unit, and rspec gems"
 end
 
 require 'text_diff'
