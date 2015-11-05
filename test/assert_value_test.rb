@@ -2,12 +2,19 @@
 
 require 'assert_value'
 
-test_case_class = case ASSERT_VALUE_TEST_FRAMEWORK
-    when :new_minitest then Minitest::Test
-    when :old_minitest then MiniTest::Unit::TestCase
-    when :test_unit then Test::Unit::TestCase
-    when :rspec_only then raise "This test case requires either Minitest or Test::Unit"
-    else raise "Unknown test framework"
+case ASSERT_VALUE_TEST_FRAMEWORK
+    when :new_minitest then
+        require 'minitest/autorun'
+        test_case_class = Minitest::Test
+    when :old_minitest then
+        require 'minitest/autorun'
+        test_case_class = MiniTest::Unit::TestCase
+    when :test_unit then
+        test_case_class = Test::Unit::TestCase
+    when :rspec_only then
+        raise "This test case requires either Minitest or Test::Unit"
+    else
+        raise "Unknown test framework"
 end
 
 class AssertValueTest < test_case_class

@@ -6,7 +6,7 @@
 # 3) Minitest > 5.0 bundles with Ruby >= 2.2.2 or installed via gem
 # 4) RSpec
 begin
-    require 'minitest/autorun' # Minitest 5.x
+    require 'minitest' # Minitest 5.x
 rescue LoadError
     begin
         require 'minitest/unit' # old Minitest
