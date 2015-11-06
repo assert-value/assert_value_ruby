@@ -1,5 +1,18 @@
 # Copyright (c) 2011-2015 Pluron, Inc.
 
+begin
+    require 'minitest' # Minitest 5.x
+rescue LoadError
+    begin
+        require 'minitest/unit' # old Minitest
+    rescue LoadError
+        begin
+            require 'test/unit' # Test::Unit
+        rescue LoadError
+            # RSpec only
+        end
+    end
+end
 require 'assert_value'
 
 case ASSERT_VALUE_TEST_FRAMEWORK

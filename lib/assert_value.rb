@@ -5,19 +5,6 @@
 # 2) Minitest 2.x-4.x, either bundled with Ruby 1.9 - 2.1 or installed via gem
 # 3) Minitest > 5.0 bundles with Ruby >= 2.2.2 or installed via gem
 # 4) RSpec
-begin
-    require 'minitest' # Minitest 5.x
-rescue LoadError
-    begin
-        require 'minitest/unit' # old Minitest
-    rescue LoadError
-        begin
-            require 'test/unit' # Test::Unit
-        rescue LoadError
-            # RSpec only
-        end
-    end
-end
 
 if defined?(Minitest) and Minitest.const_defined?("VERSION") and Minitest::VERSION >= "5.0.0"
     ASSERT_VALUE_TEST_FRAMEWORK = :new_minitest
