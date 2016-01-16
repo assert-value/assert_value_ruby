@@ -217,7 +217,7 @@ module AssertValueAssertion
             else
                 log_file = File.expand_path(log_file, Dir.pwd)
             end
-            expected = File.exists?(log_file) ? File.read(log_file) : ""
+            expected = File.exist?(log_file) ? File.read(log_file) : ""
             change = :update_file_with_expected_string
         else
             internal_error("Invalid expected class #{expected.class}")
