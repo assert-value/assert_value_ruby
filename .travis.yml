@@ -54,7 +54,7 @@ matrix:
     - rvm: 2.2.3
       gemfile: gemfiles/minitest.4.7.5.gemfile
       script: bundle exec rake test
-    - rvm: 2.2.2
+    - rvm: 2.2.3
       gemfile: gemfiles/minitest.gemfile
       script: bundle exec rake test
     - rvm: 2.2.3
