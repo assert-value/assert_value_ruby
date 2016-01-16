@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/acunote/assert_value.svg?branch=master)](https://travis-ci.org/acunote/assert_value)
+
 # assert_value
 
 Checks that two values are same and "magically" replaces expected value
