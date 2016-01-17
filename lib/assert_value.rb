@@ -189,7 +189,7 @@ module AssertValueAssertion
         if block_given?
             # rspec passes block to the expect() function, not to the matcher
             # so string substitution should work as if assert_value is called with a string
-            mode = @rspec_matcher ? :scalar : :block
+            mode = defined? @rspec_matcher ? :scalar : :block
             expected = args[0]
             actual = ""
             begin
@@ -284,7 +284,7 @@ private
     end
 
     def increment_assertion_count
-        return if @rspec_matcher or self.class.name =~ /RSpec/
+        return if defined? @rspec_matcher or self.class.name =~ /RSpec/
         case ASSERT_VALUE_TEST_FRAMEWORK
             when :new_minitest then self.assertions += 1
             when :old_minitest then self._assertions += 1
