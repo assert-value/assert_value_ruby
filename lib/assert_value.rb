@@ -1,5 +1,4 @@
 # Copyright (c) 2010-2015 Pluron, Inc.
-
 # there're 4 types of test frameworks we support
 # 1) Test::Unit from Ruby <= 1.8.7 and Ruby >= 2.2.2
 # 2) Minitest 2.x-4.x, either bundled with Ruby 1.9 - 2.1 or installed via gem
@@ -296,6 +295,8 @@ private
     def soft_fail(diff)
         if [:new_minitest, :old_minitest].include?(ASSERT_VALUE_TEST_FRAMEWORK)
             failure = MiniTest::Assertion.new(diff)
+        elsif [:rspec_only].include?(ASSERT_VALUE_TEST_FRAMEWORK)
+            failure = diff
         else
             failure = Test::Unit::Failure.new(name, filter_backtrace(caller(0)), diff)
         end
@@ -315,7 +316,7 @@ private
     # change - what to do with expected value (:create_expected_string or :update_expected_string)
     # mode   - describes signature of assert_value call by type of main argument (:block or :scalar)
     def accept_string(actual, change, mode)
-        depth = @rspec_matcher ? 6 : 3
+        depth = @rspec_matcher ? 8 : 3
         file, method, line = get_caller_location(:depth => depth)
 
         # read source file, construct the new source, replacing everything
