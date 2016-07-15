@@ -61,7 +61,7 @@ class AssertValueTest < test_case_class
         assert_value(<<-END) do
             All Ok!
         END
-            a = "All Ok!"
+            "All Ok!"
         end
     end
 
