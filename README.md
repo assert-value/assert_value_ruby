@@ -1,5 +1,8 @@
 # assert_value
 
+[![Gem Version](https://badge.fury.io/rb/assert_value.svg)](https://badge.fury.io/rb/assert_value)
+[![Build Status](https://travis-ci.org/acunote/assert_value.svg?branch=master)](https://travis-ci.org/acunote/assert_value)
+
 Checks that two values are same and "magically" replaces expected value
 with the actual in case the new behavior (and new actual value) is correct.
 Support two kind of arguments: string and code block.

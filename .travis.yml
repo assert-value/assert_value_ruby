@@ -1,3 +1,9 @@
+# use containter-based infastructured
+# intended to fix:
+#   NoMethodError: undefined method `spec' for nil:NilClass
+# https://github.com/bundler/bundler/issues/3558
+sudo: false
+
 language: ruby
 
 rvm:
@@ -5,6 +11,7 @@ rvm:
   - 1.9.3
   - 2.2.2
   - 2.2.3
+  - 2.3.0
 
 gemfile: Gemfile
 
@@ -48,12 +55,27 @@ matrix:
     - rvm: 2.2.3
       gemfile: gemfiles/minitest.4.7.5.gemfile
       script: bundle exec rake test
-    - rvm: 2.2.2
+    - rvm: 2.2.3
       gemfile: gemfiles/minitest.gemfile
       script: bundle exec rake test
     - rvm: 2.2.3
       gemfile: gemfiles/test-unit.gemfile
       script: bundle exec rake test
     - rvm: 2.2.3
+      gemfile: gemfiles/rspec.gemfile
+      script: bundle exec rake spec
+    - rvm: 2.3.0
+      gemfile: gemfiles/rspec.2.99.gemfile
+      script: bundle exec rspec test
+    - rvm: 2.3.0
+      gemfile: gemfiles/minitest.4.7.5.gemfile
+      script: bundle exec rake test
+    - rvm: 2.3.0
+      gemfile: gemfiles/minitest.gemfile
+      script: bundle exec rake test
+    - rvm: 2.3.0
+      gemfile: gemfiles/test-unit.gemfile
+      script: bundle exec rake test
+    - rvm: 2.3.0
       gemfile: gemfiles/rspec.gemfile
       script: bundle exec rake spec
