@@ -2,5 +2,6 @@
 *.gem
 pkg
 .kdev4
+Gemfile
 Gemfile.lock
 .bundle
