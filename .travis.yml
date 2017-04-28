@@ -9,7 +9,6 @@ language: ruby
 rvm:
   - 1.8.7
   - 1.9.3
-  - 2.2.2
   - 2.2.3
   - 2.3.0
 
@@ -18,7 +17,6 @@ matrix:
   exclude:
     - rvm: 1.8.7
     - rvm: 1.9.3
-    - rvm: 2.2.2
     - rvm: 2.2.3
     - rvm: 2.3.0
   include:
@@ -38,19 +36,6 @@ matrix:
     - rvm: 1.9.3
       gemfile: gemfiles/rspec.2.99.gemfile
       script: bundle exec rspec test
-    - rvm: 2.2.2
-      gemfile: gemfiles/rspec.2.99.gemfile
-      script: bundle exec rspec test
-    - rvm: 2.2.2
-      gemfile: gemfiles/minitest.4.7.5.gemfile
-      script: bundle exec rake test
-    - rvm: 2.2.2
-      gemfile: gemfiles/minitest.gemfile
-      script: bundle exec rake test
-    - rvm: 2.2.2
-      gemfile: gemfiles/test-unit.gemfile
-      script: bundle exec rake test
-    - rvm: 2.2.2
       gemfile: gemfiles/rspec.gemfile
       script: bundle exec rake spec
     - rvm: 2.2.3
