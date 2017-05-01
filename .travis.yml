@@ -21,50 +21,36 @@ matrix:
     - rvm: 2.3.0
   include:
     - rvm: 1.8.7
-      gemfile: gemfiles/old-rubies.gemfile
-      script:
-        - bundle exec rake test
-        - bundle exec rspec test
+      gemfile: gemfiles/test-unit.bundled.gemfile
     - rvm: 1.8.7
       gemfile: gemfiles/rspec.2.99.gemfile
       script: bundle exec rspec test
+    - rvm: 1.8.7
+      gemfile: gemfiles/rspec.latest.gemfile
+      script: bundle exec rake spec
     - rvm: 1.9.3
-      gemfile: gemfiles/old-rubies.gemfile
-      script:
-        - bundle exec rake test
-        - bundle exec rspec test
+      gemfile: gemfiles/minitest.bundled.gemfile
     - rvm: 1.9.3
       gemfile: gemfiles/rspec.2.99.gemfile
       script: bundle exec rspec test
-      gemfile: gemfiles/rspec.gemfile
+    - rvm: 1.9.3
+      gemfile: gemfiles/rspec.latest.gemfile
       script: bundle exec rake spec
     - rvm: 2.2.3
-      gemfile: gemfiles/rspec.2.99.gemfile
-      script: bundle exec rspec test
-    - rvm: 2.2.3
-      gemfile: gemfiles/minitest.4.7.5.gemfile
+      gemfile: gemfiles/test-unit.latest.gemfile
       script: bundle exec rake test
     - rvm: 2.2.3
-      gemfile: gemfiles/minitest.gemfile
+      gemfile: gemfiles/minitest.latest.gemfile
       script: bundle exec rake test
     - rvm: 2.2.3
-      gemfile: gemfiles/test-unit.gemfile
-      script: bundle exec rake test
-    - rvm: 2.2.3
-      gemfile: gemfiles/rspec.gemfile
+      gemfile: gemfiles/rspec.latest.gemfile
       script: bundle exec rake spec
     - rvm: 2.3.0
-      gemfile: gemfiles/rspec.2.99.gemfile
-      script: bundle exec rspec test
-    - rvm: 2.3.0
-      gemfile: gemfiles/minitest.4.7.5.gemfile
+      gemfile: gemfiles/test-unit.latest.gemfile
       script: bundle exec rake test
     - rvm: 2.3.0
-      gemfile: gemfiles/minitest.gemfile
+      gemfile: gemfiles/minitest.latest.gemfile
       script: bundle exec rake test
     - rvm: 2.3.0
-      gemfile: gemfiles/test-unit.gemfile
-      script: bundle exec rake test
-    - rvm: 2.3.0
-      gemfile: gemfiles/rspec.gemfile
+      gemfile: gemfiles/rspec.latest.gemfile
       script: bundle exec rake spec

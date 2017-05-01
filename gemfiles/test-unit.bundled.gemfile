@@ -1,6 +1,7 @@
 source 'https://rubygems.org'
 
+# Test-Unit 1.2.3 is bundled with ruby 1.8
+
 group :development, :test do
-  gem 'rake', '~> 10.5.0'
-  gem 'rspec'
+  gem 'rake'
 end
