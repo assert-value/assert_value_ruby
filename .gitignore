@@ -5,3 +5,4 @@ pkg
 Gemfile
 Gemfile.lock
 .bundle
+.ruby-version
