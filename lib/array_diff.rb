@@ -180,8 +180,8 @@ class ArrayDiff
           print "< "
         elsif l[0] == "+"
           offset += 1
-      if lastdel
-        lastdel = false
+          if lastdel
+            lastdel = false
             puts "---"
           end
           print "> "
