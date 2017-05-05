@@ -3,5 +3,6 @@ source 'https://rubygems.org'
 # Test-Unit 1.2.3 is bundled with ruby 1.8
 
 group :development, :test do
-  gem 'rake'
+  # Latest rake compatible with ruby 1.8.7
+  gem 'rake', '10.5.0'
 end
