@@ -317,7 +317,7 @@ private
     # mode   - describes signature of assert_value call by type of main argument (:block or :scalar)
     def accept_string(actual, change, mode)
         depth = @rspec_matcher ? 8 : 3
-        file, method, line = get_caller_location(:depth => depth)
+        file, _, line = get_caller_location(:depth => depth)
 
         # read source file, construct the new source, replacing everything
         # between "do" and "end" in assert_value's block
