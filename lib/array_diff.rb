@@ -155,8 +155,6 @@ class ArrayDiff
     offset = 0
     @diffs.each { |b|
       first = b[0][1]
-      length = b.length
-      action = b[0][0]
       addcount = 0
       remcount = 0
       b.each { |l| 
