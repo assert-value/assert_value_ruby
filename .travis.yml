@@ -9,16 +9,18 @@ language: ruby
 rvm:
   - 1.8.7
   - 1.9.3
-  - 2.2.3
-  - 2.3.0
+  - 2.2.6
+  - 2.3.3
+  - 2.4.1
 
 matrix:
   # Do not run tests with default Gemfile. We don't have it
   exclude:
     - rvm: 1.8.7
     - rvm: 1.9.3
-    - rvm: 2.2.3
-    - rvm: 2.3.0
+    - rvm: 2.2.6
+    - rvm: 2.3.3
+    - rvm: 2.4.1
   include:
     - rvm: 1.8.7
       gemfile: gemfiles/test-unit.bundled.gemfile
@@ -36,21 +38,30 @@ matrix:
     - rvm: 1.9.3
       gemfile: gemfiles/rspec.latest.gemfile
       script: bundle exec rake spec
-    - rvm: 2.2.3
+    - rvm: 2.2.6
       gemfile: gemfiles/test-unit.latest.gemfile
       script: bundle exec rake test
-    - rvm: 2.2.3
+    - rvm: 2.2.6
       gemfile: gemfiles/minitest.latest.gemfile
       script: bundle exec rake test
-    - rvm: 2.2.3
+    - rvm: 2.2.6
       gemfile: gemfiles/rspec.latest.gemfile
       script: bundle exec rake spec
-    - rvm: 2.3.0
+    - rvm: 2.3.3
       gemfile: gemfiles/test-unit.latest.gemfile
       script: bundle exec rake test
-    - rvm: 2.3.0
+    - rvm: 2.3.3
       gemfile: gemfiles/minitest.latest.gemfile
       script: bundle exec rake test
-    - rvm: 2.3.0
+    - rvm: 2.3.3
+      gemfile: gemfiles/rspec.latest.gemfile
+      script: bundle exec rake spec
+    - rvm: 2.4.1
+      gemfile: gemfiles/test-unit.latest.gemfile
+      script: bundle exec rake test
+    - rvm: 2.4.1
+      gemfile: gemfiles/minitest.latest.gemfile
+      script: bundle exec rake test
+    - rvm: 2.4.1
       gemfile: gemfiles/rspec.latest.gemfile
       script: bundle exec rake spec
