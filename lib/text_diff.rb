@@ -45,8 +45,6 @@ class TextDiff
         offset = 0
         diff.diffs.each do |tuple|
             first = tuple[0][1]
-            length = tuple.length
-            action = tuple[0][0]
             addcount = 0
             remcount = 0
             tuple.each do |l| 
@@ -65,7 +63,6 @@ class TextDiff
             end
             result += self.chunk(a, from, to)
             from = nextfrom
-            lastdel = (tuple[0][0] == "-")
             tuple.each do |l|
                 if l[0] == "-"
                     offset -= 1
@@ -80,7 +77,7 @@ class TextDiff
         elsif a.length > 0
             result += self.chunk(a, from, a.length-1)
         end
-        linecount = addcount = remcount = offset = current_offset = 0
+        linecount = addcount = remcount = offset = 0
         info_index = nil
         result.each_with_index do |l, i|
             if l[0] == '@'
