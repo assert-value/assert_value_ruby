@@ -70,7 +70,7 @@ end
 
 #Use this to raise internal error with a given message
 #You can define your own method for your application
-unless defined? internal_error
+unless defined?(internal_error)
     def internal_error(message = 'internal error')
         raise message
     end
@@ -189,7 +189,7 @@ module AssertValueAssertion
         if block_given?
             # rspec passes block to the expect() function, not to the matcher
             # so string substitution should work as if assert_value is called with a string
-            mode = defined? @rspec_matcher ? :scalar : :block
+            mode = defined?(@rspec_matcher) ? :scalar : :block
             expected = args[0]
             actual = ""
             begin
@@ -211,7 +211,7 @@ module AssertValueAssertion
         elsif expected.class == Hash
             raise ":log key is missing" unless expected.has_key? :log
             log_file = expected[:log]
-            if defined? RAILS_ROOT
+            if defined?(RAILS_ROOT)
                 log_file = File.expand_path(log_file, RAILS_ROOT)
             else
                 log_file = File.expand_path(log_file, Dir.pwd)
@@ -284,7 +284,7 @@ private
     end
 
     def increment_assertion_count
-        return if defined? @rspec_matcher or self.class.name =~ /RSpec/
+        return if defined?(@rspec_matcher) or self.class.name =~ /RSpec/
         case ASSERT_VALUE_TEST_FRAMEWORK
             when :new_minitest then self.assertions += 1
             when :old_minitest then self._assertions += 1
