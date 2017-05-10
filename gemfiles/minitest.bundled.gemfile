@@ -1,8 +1,7 @@
 source 'https://rubygems.org'
 
-gemspec
+# Minitest 2.5.1 is bundled with ruby 1.9.3
 
 group :development, :test do
   gem 'rake'
-  gem 'rspec'
 end

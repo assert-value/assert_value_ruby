@@ -122,6 +122,75 @@ In Ruby 1.9:
     rake test TESTOPTS="--no-canonicalize --autoaccept"
 
 
+## Supported Rubies and Test Frameworks
+
+| Framework / Ruby    | 1.8.7 | 1.9.3 | 2.0+ |
+|---------------------|-------|-------|------|
+| Test-Unit (bundled) | Yes   | No    | No   |
+| Minitest (bundled)  | No    | Yes   | No   |
+| Test-Unit (latest)  | No    | No    | Yes  |
+| Minitest (latest)   | No    | No    | Yes  |
+| Rspec 2.99          | Yes   | Yes   | No   |
+| Rspec (latest)      | Yes   | Yes   | Yes  |
+
+- ruby 1,8.7 came with bundled Test-unit 1.2.3 and cannot run latest Test-Unit
+  and Minitest frameworks
+- ruby 1.9.3 came with bundled Minitest 2.5.1 and cannot run other Test-Unit
+  and MInitest frameworks
+- RSpec 2.99 is the latest RSpec framework compatible with Rails 2.3
+
+## Development
+
+
+One way to setup development environment using rbenv:
+
+```bash
+# compile ruby
+rbenv install 2.3.0
+
+# set local version of ruby under rbenv
+rbenv local 2.3.0
+
+# install bundler
+gem install bundle
+
+# configure bundler
+bundle config --local path .bundle/gems
+bundle config --local bin .bundle/bin    # binstubs
+bundle config   # to see current settings
+
+# below seems to be necessary, having a Gemfile in
+# subdirectory like
+#    bundle config --local gemfile gemfiles/test-unit.bundled.gemfile
+# breaks tests in old rubies
+ln -s gemfiles/test-unit.bundled.gemfile Gemfile
+
+# install gems
+bundle install
+```
+## Run Tests
+
+Test-Unit and Minitest
+```
+bundle exec rake test
+```
+RSpec 2.99
+```
+bundle exec rspec test
+```
+
+RSpec 3+
+```
+bundle exec rake spec
+```
+
+## Building The Gem
+```
+gem build assert_value.gemspec
+ls assert_value-*.gem
+gem push assert_value-*.gem
+```
+
 ## Changelog
 
 - 1.5: Improve support for various testing frameworks and Ruby versions:
