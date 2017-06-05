@@ -9,6 +9,11 @@ Support two kind of arguments: string and code block.
 
 This check works with both Test/Unit and RSpec. See documentation and examples below:
 
+# Screencast
+
+![Screencast](https://github.com/assert-value/assert_value_screencasts/raw/master/screencast_10fps.gif)
+
+
 ## Testing String Values
 
 It is better to start with no expected value
