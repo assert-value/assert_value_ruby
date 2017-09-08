@@ -477,9 +477,8 @@ class BeSameValueAs
     end
 end
 
-
 if defined?(RSpec)
-    RSpec.configure do |c|
+    RSpec.send(:configure) do |c|
         c.include AssertValueAssertion
     end
 end
