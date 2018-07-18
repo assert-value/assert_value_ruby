@@ -111,4 +111,13 @@ class AssertValueTest < test_case_class
         END
     end
 
+    def test_indentation
+        indented = "    foo\n  bar"
+        assert_value indented, <<-END
+                foo
+              bar
+        END
+    end
+
+
 end

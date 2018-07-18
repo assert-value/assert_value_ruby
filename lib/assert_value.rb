@@ -397,11 +397,11 @@ private
         # ignore leading newlines if any (trailing will be automatically ignored by split())
         result.delete_at(0) if result[0] == ""
 
-        indentation = $1.length if result[0] and result[0] =~ /^(\s+)/
+        indentation = result.map{|line| line =~ /^(\s+)/ ? $1.length : 0}.min
 
         result.map! do |line|
-            # ignore indentation: we assume that the first line defines indentation
-            line.gsub!(/^\s{#{indentation}}/, '') if indentation
+            # ignore indentation
+            line.gsub!(/^\s{#{indentation}}/, '') if indentation > 0
             # ignore trailing spaces
             line.gsub(/\s*$/, '')
         end
