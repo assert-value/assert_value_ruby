@@ -293,9 +293,12 @@ private
     end
 
     def soft_fail(diff)
-        if [:new_minitest, :old_minitest].include?(ASSERT_VALUE_TEST_FRAMEWORK)
+        case ASSERT_VALUE_TEST_FRAMEWORK
+        when :old_minitest then
             failure = MiniTest::Assertion.new(diff)
-        elsif [:rspec_only].include?(ASSERT_VALUE_TEST_FRAMEWORK)
+        when :new_minitest then
+            failure = Minitest::Assertion.new(diff)
+        when :rspec_only then
             failure = diff
         else
             failure = Test::Unit::Failure.new(name, filter_backtrace(caller(0)), diff)
@@ -305,8 +308,11 @@ private
 
     def fail(diff)
         increment_assertion_count
-        if [:new_minitest, :old_minitest].include?(ASSERT_VALUE_TEST_FRAMEWORK)
+        case ASSERT_VALUE_TEST_FRAMEWORK
+        when :old_minitest then
             raise MiniTest::Assertion.new(diff)
+        when :new_minitest then
+            raise Minitest::Assertion.new(diff)
         else
             raise Test::Unit::AssertionFailedError.new(diff)
         end
