@@ -119,5 +119,21 @@ class AssertValueTest < test_case_class
         END
     end
 
+    if ASSERT_VALUE_TEST_FRAMEWORK == :new_minitest
+      def test_soft_fail
+          assert_value(<<-END) do
+              Exception Minitest::Assertion: @@ -1,1, +1,1 @@
+              -bar
+              +foo
+         END
+            $assert_value_options.push("--no-interactive")
+            begin
+              assert_value "foo", "bar"
+            ensure
+              $assert_value_options.pop
+            end
+          end
+      end
+    end
 
 end
