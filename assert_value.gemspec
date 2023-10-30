@@ -2,7 +2,7 @@ require 'rubygems'
 
 SPEC = Gem::Specification.new do |s|
     s.name        = "assert_value"
-    s.version     = "1.5.5"
+    s.version     = "1.5.6"
     s.author      = "Pluron, Inc."
     s.email       = "support@pluron.com"
     s.homepage    = "https://github.com/assert-value/assert_value_ruby"
