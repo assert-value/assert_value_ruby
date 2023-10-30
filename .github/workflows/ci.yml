@@ -1,0 +1,77 @@
+name: CI
+on:
+  pull_request:
+  push:
+    branches:
+      - '**'
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+        - ruby: 1.9.3
+          gemfile: gemfiles/minitest.bundled.gemfile
+          os: ubuntu-20.04
+        - ruby: 1.9.3
+          gemfile: gemfiles/rspec.2.99.gemfile
+          script: bundle exec rspec test
+          os: ubuntu-20.04
+        - ruby: 1.9.3
+          gemfile: gemfiles/rspec.latest.gemfile
+          script: bundle exec rake spec
+          os: ubuntu-20.04
+        - ruby: 2.2.10
+          gemfile: gemfiles/test-unit.latest.gemfile
+          script: bundle exec rake test
+          os: ubuntu-20.04
+        - ruby: 2.2.10
+          gemfile: gemfiles/minitest.latest.gemfile
+          script: bundle exec rake test
+          os: ubuntu-20.04
+        - ruby: 2.2.10
+          gemfile: gemfiles/rspec.latest.gemfile
+          script: bundle exec rake spec
+          os: ubuntu-20.04
+        - ruby: 2.3.8
+          gemfile: gemfiles/test-unit.latest.gemfile
+          script: bundle exec rake test
+          os: ubuntu-22.04
+        - ruby: 2.3.8
+          gemfile: gemfiles/minitest.latest.gemfile
+          script: bundle exec rake test
+          os: ubuntu-22.04
+        - ruby: 2.3.8
+          gemfile: gemfiles/rspec.latest.gemfile
+          script: bundle exec rake spec
+          os: ubuntu-22.04
+        - ruby: 2.5.7
+          gemfile: gemfiles/test-unit.latest.gemfile
+          script: bundle exec rake test
+          os: ubuntu-22.04
+        - ruby: 2.5.7
+          gemfile: gemfiles/minitest.latest.gemfile
+          script: bundle exec rake test
+          os: ubuntu-22.04
+        - ruby: 2.5.7
+          gemfile: gemfiles/rspec.latest.gemfile
+          script: bundle exec rake spec
+          os: ubuntu-22.04
+        - ruby: 3.2.2
+          gemfile: gemfiles/minitest.latest.gemfile
+          script: bundle exec rake test
+          os: ubuntu-22.04
+        - ruby: 3.2.2
+          gemfile: gemfiles/rspec.latest.gemfile
+          script: bundle exec rake spec
+          os: ubuntu-22.04
+    runs-on: "${{ matrix.os }}"
+    env:
+      BUNDLE_GEMFILE: "${{ matrix.gemfile }}"
+    steps:
+    - uses: actions/checkout@v4
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby }}
+        bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+    - run: "${{ matrix.script }}"
